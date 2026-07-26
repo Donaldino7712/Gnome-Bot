@@ -11,7 +11,8 @@ import dev.latvian.apps.webutils.FormattingUtils;
 import discord4j.core.event.domain.interaction.DeferrableInteractionEvent;
 import discord4j.core.object.component.ActionComponent;
 import discord4j.core.object.component.ActionRow;
-import discord4j.core.object.component.LayoutComponent;
+import discord4j.core.object.component.TopLevelModalComponent;
+import discord4j.core.spec.InteractionPresentModalSpec;
 import discord4j.discordjson.json.MessageData;
 import discord4j.rest.http.client.ClientException;
 import discord4j.rest.interaction.InteractionResponse;
@@ -121,12 +122,17 @@ public abstract class DeferrableInteractionEventWrapper<T extends DeferrableInte
 		return respond(MessageBuilder.create(embed));
 	}
 
-	public void respondModal(String customId, String title, Collection<LayoutComponent> components) {
+	public void respondModal(String customId, String title, Collection<TopLevelModalComponent> components) {
 		if (customId.length() > 100) {
 			throw new GnomeException("Invalid custom modal ID: `" + customId + "`");
 		}
 
-		event.presentModal(FormattingUtils.trim(title, 45), customId, components).block();
+		event.presentModal(InteractionPresentModalSpec.builder()
+			.customId(customId)
+			.title(FormattingUtils.trim(title, 45))
+			.components(components)
+			.build()
+		).block();
 	}
 
 	public void respondModal(String customId, String title, ActionComponent... textInputs) {

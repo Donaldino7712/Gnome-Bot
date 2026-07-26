@@ -52,9 +52,9 @@ public class MinecraftHandlers {
 			thread.start();
 
 			return EmbedBuilder.create("Verify Minecraft", "Waiting for " + user.getMention() + " to start verification...")
-					.color(EmbedColor.RED)
-					.field("User", user.getMention())
-					.field("Link expires", Utils.formatRelativeDate(expires));
+				.color(EmbedColor.RED)
+				.field("User", user.getMention())
+				.field("Link expires", Utils.formatRelativeDate(expires));
 		}
 
 		public void started() {
@@ -68,11 +68,11 @@ public class MinecraftHandlers {
 			Log.warn(user.getUsername() + " started mc verification");
 
 			message.edit().withEmbedsOrNull(List.of(
-					EmbedBuilder.create("Verify Minecraft", "Waiting for " + user.getMention() + " to complete verification...")
-							.color(EmbedColor.YELLOW)
-							.field("User", user.getMention())
-							.field("Link expires", Utils.formatRelativeDate(expires))
-							.toEmbedCreateSpec()
+				EmbedBuilder.create("Verify Minecraft", "Waiting for " + user.getMention() + " to complete verification...")
+					.color(EmbedColor.YELLOW)
+					.field("User", user.getMention())
+					.field("Link expires", Utils.formatRelativeDate(expires))
+					.toEmbedCreateSpec()
 			)).subscribe();
 		}
 
@@ -82,11 +82,11 @@ public class MinecraftHandlers {
 			Log.success(user.getUsername() + " completed mc verification as " + name);
 
 			message.edit().withEmbedsOrNull(List.of(
-					EmbedBuilder.create("Verify Minecraft", "Success! Verified as [" + name + "](https://mcuuid.net/?q=" + uuid + ")")
-							.color(EmbedColor.GREEN)
-							.field("User", user.getMention())
-							.thumbnail("https://mc-heads.net/head/" + uuid)
-							.toEmbedCreateSpec()
+				EmbedBuilder.create("Verify Minecraft", "Success! Verified as [" + name + "](https://mcuuid.net/?q=" + uuid + ")")
+					.color(EmbedColor.GREEN)
+					.field("User", user.getMention())
+					.thumbnail("https://mc-heads.net/head/" + uuid)
+					.toEmbedCreateSpec()
 			)).subscribe();
 
 			gc.unmute(user.getId().asLong(), 0L, user.getMention() + " Verified Minecraft");
@@ -106,10 +106,10 @@ public class MinecraftHandlers {
 			Log.error(user.getUsername() + " failed mc verification: " + error);
 
 			message.edit().withEmbedsOrNull(List.of(
-					EmbedBuilder.create("Verify Minecraft", error.startsWith("com.fasterxml.jackson") ? "Internal Error" : ("Error!\n\n" + error))
-							.color(EmbedColor.RED)
-							.field("User", user.getMention())
-							.toEmbedCreateSpec()
+				EmbedBuilder.create("Verify Minecraft", error.startsWith("com.fasterxml.jackson") ? "Internal Error" : ("Error!\n\n" + error))
+					.color(EmbedColor.RED)
+					.field("User", user.getMention())
+					.toEmbedCreateSpec()
 			)).subscribe();
 		}
 
@@ -169,7 +169,7 @@ public class MinecraftHandlers {
 		data.event = event;
 
 		event.respond("[Click this link](<https://gnomebot.dev/minecraft/verify?state=" + data.token + ">) to verify your Minecraft profile!" +
-				"\nYou will have to log in with your Microsoft Account");
+			"\nYou will have to log in with your Microsoft Account");
 
 		MAP.put(data.token, data);
 	}
@@ -221,20 +221,20 @@ public class MinecraftHandlers {
 
 	private static BaseMinecraftProfile verify1(AppRequest req, String code) throws Exception {
 		var formData = CodingUtils.encodeURL(Map.of(
-				"client_id", req.app.config.microsoft.client_id,
-				"client_secret", req.app.config.microsoft.client_secret,
-				"code", code,
-				"grant_type", "authorization_code",
-				"redirect_uri", "https://gnomebot.dev/minecraft/verify",
-				"scope", "XboxLive.signin"
+			"client_id", req.app.config.microsoft.client_id,
+			"client_secret", req.app.config.microsoft.client_secret,
+			"code", code,
+			"grant_type", "authorization_code",
+			"redirect_uri", "https://gnomebot.dev/minecraft/verify",
+			"scope", "XboxLive.signin"
 		));
 
 		Log.info(formData);
 
 		var request = App.request(TOKEN_URI)
-				.header("Content-Type", "application/x-www-form-urlencoded")
-				.header("Accept", "application/x-www-form-urlencoded")
-				.POST(HttpRequest.BodyPublishers.ofString(formData)).build();
+			.header("Content-Type", "application/x-www-form-urlencoded")
+			.header("Accept", "application/x-www-form-urlencoded")
+			.POST(HttpRequest.BodyPublishers.ofString(formData)).build();
 
 		var resp = App.HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 		var json = parseJson("A0", resp);
@@ -265,10 +265,10 @@ public class MinecraftHandlers {
 		data.put("TokenType", "JWT");
 
 		var request = App.request(XBOX_AUTH_URI)
-				.header("Content-Type", "application/json")
-				.header("Accept", "application/json")
-				.header("x-xbl-contract-version", "1")
-				.POST(HttpRequest.BodyPublishers.ofString(data.toString())).build();
+			.header("Content-Type", "application/json")
+			.header("Accept", "application/json")
+			.header("x-xbl-contract-version", "1")
+			.POST(HttpRequest.BodyPublishers.ofString(data.toString())).build();
 
 		var resp = App.HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 		var json = parseJson("B0", resp);
@@ -297,9 +297,9 @@ public class MinecraftHandlers {
 		data.put("TokenType", "JWT");
 
 		var request = App.request(XSTS_AUTH_URI)
-				.header("Content-Type", "application/json")
-				.header("Accept", "application/json")
-				.POST(HttpRequest.BodyPublishers.ofString(data.toString())).build();
+			.header("Content-Type", "application/json")
+			.header("Accept", "application/json")
+			.POST(HttpRequest.BodyPublishers.ofString(data.toString())).build();
 
 		var resp = App.HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 		var json = parseJson("C0", resp);
@@ -352,9 +352,9 @@ public class MinecraftHandlers {
 		data.put("identityToken", "XBL3.0 x=" + xblUhs + ";" + xblXsts);
 
 		var request = App.request(MC_XBOX_AUTH_URI)
-				.header("Content-Type", "application/json")
-				.header("Accept", "application/json")
-				.POST(HttpRequest.BodyPublishers.ofString(data.toString())).build();
+			.header("Content-Type", "application/json")
+			.header("Accept", "application/json")
+			.POST(HttpRequest.BodyPublishers.ofString(data.toString())).build();
 
 		var resp = App.HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 		var json = parseJson("D0", resp);
@@ -377,8 +377,8 @@ public class MinecraftHandlers {
 
 	private static BaseMinecraftProfile checkMcProfile(String mcAccessToken) throws Exception {
 		var request = App.request(MC_PROFILE_URI)
-				.header("Authorization", "Bearer " + mcAccessToken)
-				.GET().build();
+			.header("Authorization", "Bearer " + mcAccessToken)
+			.GET().build();
 
 		var resp = App.HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 		var json = parseJson("E0", resp);

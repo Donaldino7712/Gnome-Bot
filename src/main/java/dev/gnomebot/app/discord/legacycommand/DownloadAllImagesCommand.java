@@ -38,8 +38,8 @@ public class DownloadAllImagesCommand {
 		var userCache = context.handler.createUserCache();
 
 		var tempDir = AppPaths.GUILD_DATA
-				.resolve("images-" + context.channelInfo.id)
-				.resolve("images-" + context.channelInfo.id + "-" + Instant.now().toString().replace(':', '-'));
+			.resolve("images-" + context.channelInfo.id)
+			.resolve("images-" + context.channelInfo.id + "-" + Instant.now().toString().replace(':', '-'));
 
 		Files.createDirectories(tempDir);
 
@@ -108,7 +108,7 @@ public class DownloadAllImagesCommand {
 			}
 
 			try (InputStream urlStream = new BufferedInputStream(URLRequest.of(image.url).block());
-				 OutputStream fileOut = new BufferedOutputStream(Files.newOutputStream(tempDir.resolve(image.filename)))) {
+			     OutputStream fileOut = new BufferedOutputStream(Files.newOutputStream(tempDir.resolve(image.filename)))) {
 				int len;
 				while ((len = urlStream.read(buffer)) > 0) {
 					fileOut.write(buffer, 0, len);

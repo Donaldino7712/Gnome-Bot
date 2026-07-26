@@ -6,11 +6,11 @@ import dev.latvian.apps.ansi.ANSITable;
 
 public class CursePointCalculatorCommand extends ApplicationCommands {
 	public static final ChatInputInteractionBuilder COMMAND = chatInputInteraction("curse-point-calculator")
-			.supportsDM()
-			.description("Curse Point calculator")
-			.add(number("daily-points").required())
-			.add(currency("currency"))
-			.run(CursePointCalculatorCommand::run);
+		.supportsDM()
+		.description("Curse Point calculator")
+		.add(number("daily-points").required())
+		.add(currency("currency"))
+		.run(CursePointCalculatorCommand::run);
 
 	private static void run(ChatInputInteractionEventWrapper event) throws Exception {
 		event.acknowledgeEphemeral();

@@ -17,9 +17,9 @@ import java.util.List;
 
 public class ModpackCommand extends ApplicationCommands {
 	public static final ChatInputInteractionBuilder COMMAND = chatInputInteraction("modpack")
-			.supportsDM()
-			.description("Gives you a random Minecraft modpack to play")
-			.run(ModpackCommand::run);
+		.supportsDM()
+		.description("Gives you a random Minecraft modpack to play")
+		.run(ModpackCommand::run);
 
 	public static class Pack {
 		public String name;
@@ -62,14 +62,14 @@ public class ModpackCommand extends ApplicationCommands {
 		var pack = getRandomPack();
 
 		event.getResponse().editInitialResponse(WebhookMessageEditRequest.builder()
-				.addEmbed(EmbedCreateSpec.builder()
-						.color(EmbedColor.GRAY)
-						.title("What pack should I play?")
-						.description("[" + pack.name + "](" + pack.url + ")")
-						.build().asRequest()
-				)
-				.addComponent(ActionRow.of(Button.secondary("refresh_modpack", Emojis.REFRESH, "Refresh")).getData())
-				.build()
+			.addEmbed(EmbedCreateSpec.builder()
+				.color(EmbedColor.GRAY)
+				.title("What pack should I play?")
+				.description("[" + pack.name + "](" + pack.url + ")")
+				.build().asRequest()
+			)
+			.addComponent(ActionRow.of(Button.secondary("refresh_modpack", Emojis.REFRESH, "Refresh")).getData())
+			.build()
 		).subscribe();
 	}
 
@@ -80,9 +80,9 @@ public class ModpackCommand extends ApplicationCommands {
 			var pack = ModpackCommand.getRandomPack();
 
 			builder.addEmbed(EmbedBuilder.create()
-					.color(EmbedColor.GRAY)
-					.title("What pack should I play?")
-					.description("[" + pack.name + "](" + pack.url + ")")
+				.color(EmbedColor.GRAY)
+				.title("What pack should I play?")
+				.description("[" + pack.name + "](" + pack.url + ")")
 			);
 
 			event.edit().respond(builder);

@@ -11,15 +11,15 @@ import org.jetbrains.annotations.Nullable;
 
 public class ReportCommand extends ApplicationCommands {
 	public static final ChatInputInteractionBuilder COMMAND = chatInputInteraction("report")
-			.description("Report a user to the admins")
-			.add(realUser("user").required())
-			.run(ReportCommand::run);
+		.description("Report a user to the admins")
+		.add(realUser("user").required())
+		.run(ReportCommand::run);
 
 	public static final MessageInteractionBuilder MESSAGE_INTERACTION = messageInteraction("Report Message")
-			.run(ReportCommand::messageInteraction);
+		.run(ReportCommand::messageInteraction);
 
 	public static final UserInteractionBuilder USER_INTERACTION = userInteraction("Report Member")
-			.run(ReportCommand::memberInteraction);
+		.run(ReportCommand::memberInteraction);
 
 	private static void run(ChatInputInteractionEventWrapper event) {
 		presentModal(event, event.get("user").asMember().orElse(null), 0L);
@@ -61,9 +61,9 @@ public class ReportCommand extends ApplicationCommands {
 		 */
 
 		event.respondModal("report/" + member.getId().asString() + "/" + message, "Report " + member.getDisplayName(),
-				// SelectMenu.of("reason", options).withMinValues(1).withPlaceholder("Select Reason..."),
-				TextInput.small("reason", "Reason", "spam/hacks/DMs/etc.").required(true),
-				TextInput.paragraph("additional_info", "Additional Info", "You can write additional info here").required(false)
+			// SelectMenu.of("reason", options).withMinValues(1).withPlaceholder("Select Reason..."),
+			TextInput.small("reason", "Reason", "spam/hacks/DMs/etc.").required(true),
+			TextInput.paragraph("additional_info", "Additional Info", "You can write additional info here").required(false)
 		);
 	}
 

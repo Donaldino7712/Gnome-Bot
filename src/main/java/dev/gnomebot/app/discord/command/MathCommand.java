@@ -8,11 +8,11 @@ import java.nio.charset.StandardCharsets;
 
 public class MathCommand extends ApplicationCommands {
 	public static final ChatInputInteractionBuilder COMMAND = chatInputInteraction("math")
-			.supportsDM()
-			.description("Gnome knows math pretty well")
-			.add(string("equation").required())
-			.add(bool("detailed"))
-			.run(MathCommand::run);
+		.supportsDM()
+		.description("Gnome knows math pretty well")
+		.add(string("equation").required())
+		.add(bool("detailed"))
+		.run(MathCommand::run);
 
 	private static void run(ChatInputInteractionEventWrapper event) {
 		if (event.context.gc.db.app.config.wolfram_alpha_token.isEmpty()) {

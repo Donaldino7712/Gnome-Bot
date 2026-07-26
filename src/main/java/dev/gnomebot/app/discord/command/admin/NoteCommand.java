@@ -36,9 +36,9 @@ public class NoteCommand extends ApplicationCommands {
 		});
 
 		event.context.gc.auditLog(GnomeAuditLogEntry.builder(GnomeAuditLogEntry.Type.NOTE)
-				.user(user)
-				.source(event.context.sender)
-				.content(note)
+			.user(user)
+			.source(event.context.sender)
+			.content(note)
 		);
 
 		event.respond("Note added!");

@@ -74,11 +74,11 @@ public final class LegacyCommands {
 			throw new GnomeException(GnomeException.Type.NO_PERMISSION, "You don't have permission to use this command!").reaction(Emojis.POLICE_CAR);
 		} else {
 			context.gc.logCommand(
-					context.sender.getId().asLong(),
-					context.channelInfo.id,
-					context.message.getId().asLong(),
-					command.name,
-					content
+				context.sender.getId().asLong(),
+				context.channelInfo.id,
+				context.message.getId().asLong(),
+				command.name,
+				content
 			);
 
 			command.callback.run(context, reader);

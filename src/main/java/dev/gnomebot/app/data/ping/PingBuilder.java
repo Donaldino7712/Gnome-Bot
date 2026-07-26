@@ -57,10 +57,10 @@ public class PingBuilder {
 	@Override
 	public String toString() {
 		return "{" +
-				"name='" + name + '\'' +
-				", config=" + buildConfig() +
-				", pings=" + pings +
-				'}';
+			"name='" + name + '\'' +
+			", config=" + buildConfig() +
+			", pings=" + pings +
+			'}';
 	}
 
 	public static List<PingBuilder> compile(Databases db, long userId, String config, boolean checkDM) {

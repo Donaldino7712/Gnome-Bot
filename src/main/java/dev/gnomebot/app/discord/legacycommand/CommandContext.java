@@ -38,11 +38,11 @@ public class CommandContext {
 	@Override
 	public String toString() {
 		return "Context{" +
-				"gc=" + gc +
-				", channel=#" + (channelInfo == null ? "<null>" : channelInfo.getName()) +
-				", message=" + (message == null ? "<null>" : message.getContent()) +
-				", sender=" + (sender == null ? "<null?" : sender.getUsername()) +
-				'}';
+			"gc=" + gc +
+			", channel=#" + (channelInfo == null ? "<null>" : channelInfo.getName()) +
+			", message=" + (message == null ? "<null>" : message.getContent()) +
+			", sender=" + (sender == null ? "<null?" : sender.getUsername()) +
+			'}';
 	}
 
 	public void checkBotPerms(@Nullable ChannelInfo channelInfo, Permission... perms) {

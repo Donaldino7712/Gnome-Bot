@@ -19,7 +19,7 @@ import java.util.function.Predicate;
 
 public class GnomeMessageInteraction extends ApplicationCommands {
 	public static final MessageInteractionBuilder MESSAGE_INTERACTION = messageInteraction("Other Gnome Actions")
-			.run(GnomeMessageInteraction::run);
+		.run(GnomeMessageInteraction::run);
 
 	@FunctionalInterface
 	public interface Callback {
@@ -53,8 +53,8 @@ public class GnomeMessageInteraction extends ApplicationCommands {
 	}
 
 	public static final List<Action> ACTIONS = List.of(
-			new Action("webhook-edit", "Edit Webhook Message", WebhookCommands::editMessage).owner().emoji("✏️").predicate(m -> !m.getData().webhookId().isAbsent() && m.getData().interaction().isAbsent()),
-			new Action("debug-complex", "Debug Complex Message", DisplayCommands::debugComplexMessage).emoji("\uD83D\uDC1B").predicate(ComplexMessage::has)
+		new Action("webhook-edit", "Edit Webhook Message", WebhookCommands::editMessage).owner().emoji("✏️").predicate(m -> !m.getData().webhookId().isAbsent() && m.getData().interaction().isAbsent()),
+		new Action("debug-complex", "Debug Complex Message", DisplayCommands::debugComplexMessage).emoji("\uD83D\uDC1B").predicate(ComplexMessage::has)
 	);
 
 	private static void run(MessageInteractionEventWrapper event) {

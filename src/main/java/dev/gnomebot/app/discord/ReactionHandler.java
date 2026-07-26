@@ -88,10 +88,10 @@ public class ReactionHandler {
 		var emoji = event.getEmoji();
 
 		gc.auditLog(GnomeAuditLogEntry.builder(GnomeAuditLogEntry.Type.REACTION_ADDED)
-				.channel(event.getChannelId().asLong())
-				.message(event.getMessageId().asLong())
-				.user(member)
-				.content(Utils.reactionToString(emoji))
+			.channel(event.getChannelId().asLong())
+			.message(event.getMessageId().asLong())
+			.user(member)
+			.content(Utils.reactionToString(emoji))
 		);
 
 		var callback = TEMP_REACTION_HANDLERS.get(event.getMessageId().asLong());
@@ -122,10 +122,10 @@ public class ReactionHandler {
 				var gc = handler.app.db.guild(guildId);
 
 				gc.auditLog(GnomeAuditLogEntry.builder(GnomeAuditLogEntry.Type.REACTION_REMOVED)
-						.channel(event.getChannelId().asLong())
-						.message(event.getMessageId().asLong())
-						.user(u)
-						.content(Utils.reactionToString(event.getEmoji()))
+					.channel(event.getChannelId().asLong())
+					.message(event.getMessageId().asLong())
+					.user(u)
+					.content(Utils.reactionToString(event.getEmoji()))
 				);
 			});
 		});

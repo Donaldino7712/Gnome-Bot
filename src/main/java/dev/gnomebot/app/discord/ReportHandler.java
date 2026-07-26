@@ -47,11 +47,11 @@ public class ReportHandler {
 		}
 
 		event.context.gc.auditLog(GnomeAuditLogEntry.builder(GnomeAuditLogEntry.Type.MESSAGE_REPORT)
-				.channel(m.getChannelId().asLong())
-				.message(m.getId().asLong())
-				.user(author)
-				.content(m.getContent())
-				.source(event.context.sender)
+			.channel(m.getChannelId().asLong())
+			.message(m.getId().asLong())
+			.user(author)
+			.content(m.getContent())
+			.source(event.context.sender)
 		);
 
 		var quoteURL = QuoteHandler.getMessageURL(event.context.gc.guildId, event.context.channelInfo.id, m.getId().asLong());

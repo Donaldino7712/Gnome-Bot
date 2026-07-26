@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 
 public class WhoisCommand extends ApplicationCommands {
 	public static final ChatInputInteractionBuilder COMMAND = chatInputInteraction("whois")
-			.supportsDM()
-			.description("Information about a user")
-			.add(user("user").required())
-			.run(WhoisCommand::runChatInput);
+		.supportsDM()
+		.description("Information about a user")
+		.add(user("user").required())
+		.run(WhoisCommand::runChatInput);
 
 	private static void runChatInput(ChatInputInteractionEventWrapper event) {
 		run(event, event.get("user").asUser().get(), event.get("user").asOptionalMember().orElse(null), true);
@@ -32,10 +32,10 @@ public class WhoisCommand extends ApplicationCommands {
 		}
 
 		var embed = EmbedBuilder.create()
-				.title(member == null ? user.getGlobalName().orElse(user.getUsername()) : member.getDisplayName())
-				.inlineField("Username", user.getTag())
-				.inlineField("Created", Utils.formatRelativeDate(user.getId().getTimestamp()))
-				.thumbnail(user.getAvatarUrl(Image.Format.PNG).orElse(user.getDefaultAvatarUrl()));
+			.title(member == null ? user.getGlobalName().orElse(user.getUsername()) : member.getDisplayName())
+			.inlineField("Username", user.getTag())
+			.inlineField("Created", Utils.formatRelativeDate(user.getId().getTimestamp()))
+			.thumbnail(user.getAvatarUrl(Image.Format.PNG).orElse(user.getDefaultAvatarUrl()));
 
 		if (member != null) {
 			embed.url(event.context.gc.db.app.url("guild/" + member.getGuildId().asString() + "/members/" + member.getId().asString()));

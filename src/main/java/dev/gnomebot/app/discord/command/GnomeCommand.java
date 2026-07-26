@@ -9,24 +9,24 @@ import java.util.List;
 
 public class GnomeCommand extends ApplicationCommands {
 	public static final ChatInputInteractionBuilder COMMAND = chatInputInteraction("gnome")
-			.supportsDM()
-			.add(sub("about")
-					.description("Info about Gnome Bot")
-					.run(GnomeCommand::about)
+		.supportsDM()
+		.add(sub("about")
+			.description("Info about Gnome Bot")
+			.run(GnomeCommand::about)
+		)
+		.add(subGroup("panel")
+			.description("Panel commands")
+			.add(sub("login")
+				.description("Log in to the panel")
+				.run(GnomeCommand::login)
 			)
-			.add(subGroup("panel")
-					.description("Panel commands")
-					.add(sub("login")
-							.description("Log in to the panel")
-							.run(GnomeCommand::login)
-					)
-					.add(sub("logout")
-							.description("Log out of the panel (Invalidates all your tokens)")
-							.run(GnomeCommand::logout)
-					)
+			.add(sub("logout")
+				.description("Log out of the panel (Invalidates all your tokens)")
+				.run(GnomeCommand::logout)
 			)
-			// END
-			;
+		)
+		// END
+		;
 
 	private static void about(ChatInputInteractionEventWrapper event) {
 		event.acknowledgeEphemeral();

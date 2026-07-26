@@ -82,13 +82,13 @@ public class WebHookDestination implements PingDestination {
 			var request = message.toMultipartWebhookExecuteRequest();
 			body = Utils.bodyToString(request.getFiles().isEmpty() ? request.getJsonPayload() : request); // support multipart
 			var result = URLRequest.of(getUrl(id, token))
-					.query("wait", true)
-					.query("thread_id", threadId == 0L ? null : SnowFlake.str(threadId))
-					.contentType(request.getFiles().isEmpty() ? "application/json" : "multipart/form-data")
-					.toJsonObject()
-					.outString(body)
-					.hiddenUrlPart(token)
-					.block();
+				.query("wait", true)
+				.query("thread_id", threadId == 0L ? null : SnowFlake.str(threadId))
+				.contentType(request.getFiles().isEmpty() ? "application/json" : "multipart/form-data")
+				.toJsonObject()
+				.outString(body)
+				.hiddenUrlPart(token)
+				.block();
 
 			if (result.containsKey("id")) {
 				return SnowFlake.num(result.asString("id"));
@@ -125,9 +125,9 @@ public class WebHookDestination implements PingDestination {
 			content.append("[Ping ➤](").append(pingData.url()).append(") from ").append(pingData.url()).append("\n").append(pingData.content());
 
 			execute(MessageBuilder.create()
-					.content(content.toString())
-					.webhookName(pingData.username())
-					.webhookAvatarUrl(pingData.avatar())
+				.content(content.toString())
+				.webhookName(pingData.username())
+				.webhookAvatarUrl(pingData.avatar())
 			);
 		} catch (Exception ex) {
 			ex.printStackTrace();

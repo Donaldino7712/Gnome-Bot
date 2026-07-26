@@ -19,9 +19,9 @@ public class EchoCommand extends ApplicationCommands {
 		var msg = event.context.reply(message);
 
 		event.context.gc.echoLog.insert(new Document("_id", msg.getId().asLong())
-				.append("channel", event.context.channelInfo.id)
-				.append("author", event.context.sender.getId().asLong())
-				.append("content", message)
+			.append("channel", event.context.channelInfo.id)
+			.append("author", event.context.sender.getId().asLong())
+			.append("content", message)
 		);
 
 		Log.info(event.context.sender.getUsername() + " echoed: " + message);

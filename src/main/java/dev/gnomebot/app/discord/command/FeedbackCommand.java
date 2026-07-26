@@ -29,8 +29,8 @@ import java.util.List;
 
 public class FeedbackCommand extends ApplicationCommands {
 	public static final ChatInputInteractionBuilder COMMAND = chatInputInteraction("feedback")
-			.description("Open a suggestion form that will be post message in feedback channel for community to vote")
-			.run(FeedbackCommand::submit);
+		.description("Open a suggestion form that will be post message in feedback channel for community to vote")
+		.run(FeedbackCommand::submit);
 
 	private static void submit(ChatInputInteractionEventWrapper event) {
 		var feedbackChannel = event.context.gc.feedbackChannel.messageChannel().orElse(null);
@@ -64,8 +64,8 @@ public class FeedbackCommand extends ApplicationCommands {
 		event.context.checkBotPerms(feedbackChannel, Permission.ADD_REACTIONS, Permission.SEND_MESSAGES);
 
 		var m = feedbackChannel.createMessage(EmbedBuilder.create()
-				.url(event.context.gc.db.app.url("feedback/" + event.context.gc.guildId + "/" + number))
-				.title("Loading suggestion #" + number + "...")
+			.url(event.context.gc.db.app.url("feedback/" + event.context.gc.guildId + "/" + number))
+			.title("Loading suggestion #" + number + "...")
 		).block();
 
 		var document = new Document();
@@ -83,9 +83,9 @@ public class FeedbackCommand extends ApplicationCommands {
 
 		try {
 			m.startThread(StartThreadFromMessageSpec.builder()
-					.name("Discussion of " + number)
-					.autoArchiveDuration(ThreadChannel.AutoArchiveDuration.DURATION3)
-					.build()
+				.name("Discussion of " + number)
+				.autoArchiveDuration(ThreadChannel.AutoArchiveDuration.DURATION3)
+				.build()
 			).block();
 
 		} catch (Exception ex) {
@@ -93,10 +93,10 @@ public class FeedbackCommand extends ApplicationCommands {
 		}
 
 		m.edit(MessageBuilder.create().addComponent(ActionRow.of(
-				Button.secondary("feedback/" + number + "/upvote", Emojis.VOTEUP),
-				Button.secondary("feedback/" + number + "/mehvote", Emojis.VOTENONE),
-				Button.secondary("feedback/" + number + "/downvote", Emojis.VOTEDOWN),
-				Button.link(QuoteHandler.getChannelURL(event.context.gc.guildId, m.getId().asLong()), "Discussion")
+			Button.secondary("feedback/" + number + "/upvote", Emojis.VOTEUP),
+			Button.secondary("feedback/" + number + "/mehvote", Emojis.VOTENONE),
+			Button.secondary("feedback/" + number + "/downvote", Emojis.VOTEDOWN),
+			Button.link(QuoteHandler.getChannelURL(event.context.gc.guildId, m.getId().asLong()), "Discussion")
 		)).toMessageEditSpec()).block();
 
 		event.respond(MessageBuilder.create("Your feedback has been submitted!").addComponentRow(Button.link(QuoteHandler.getMessageURL(event.context.gc.guildId, m.getChannelId().asLong(), m.getId().asLong()), "Open")));

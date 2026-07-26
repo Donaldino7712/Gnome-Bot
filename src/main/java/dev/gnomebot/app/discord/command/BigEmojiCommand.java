@@ -6,10 +6,10 @@ import discord4j.core.object.emoji.UnicodeEmoji;
 
 public class BigEmojiCommand extends ApplicationCommands {
 	public static final ChatInputInteractionBuilder COMMAND = chatInputInteraction("bigemoji")
-			.supportsDM()
-			.description("Get image version of an emoji")
-			.add(string("emoji").required())
-			.run(BigEmojiCommand::run);
+		.supportsDM()
+		.description("Get image version of an emoji")
+		.add(string("emoji").required())
+		.run(BigEmojiCommand::run);
 
 	private static void run(ChatInputInteractionEventWrapper event) throws Exception {
 		event.acknowledge();

@@ -4,9 +4,9 @@ import java.util.Random;
 
 public class RandomGibberishCommand extends ApplicationCommands {
 	public static final ChatInputInteractionBuilder COMMAND = chatInputInteraction("random_gibberish")
-			.supportsDM()
-			.description("Just generates random gibberish text. You can use it as 'alien language' or something")
-			.run(RandomGibberishCommand::run);
+		.supportsDM()
+		.description("Just generates random gibberish text. You can use it as 'alien language' or something")
+		.run(RandomGibberishCommand::run);
 
 	private static final String SET_1 = "aeiouy";
 	private static final String SET_2 = "bcdfghjklmnpqrstvwxz";

@@ -75,9 +75,9 @@ public class RootHandlers {
 
 	public static HTTPResponse robots(AppRequest req) {
 		return HTTPResponse.ok().text("""
-				User-agent: *
-				Disallow: /paste/*
-				Disallow: /guilds/*
-				Allow: /""").publicCache(Duration.ofDays(1L));
+			User-agent: *
+			Disallow: /paste/*
+			Disallow: /guilds/*
+			Allow: /""").publicCache(Duration.ofDays(1L));
 	}
 }

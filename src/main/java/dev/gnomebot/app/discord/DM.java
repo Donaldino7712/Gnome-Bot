@@ -85,10 +85,10 @@ public class DM {
 
 		try {
 			return Objects.requireNonNull(handler.client.getRestClient().getUserService()
-					.createDM(DMCreateRequest.builder().recipientId(SnowFlake.str(userId)).build())
-					.map(ChannelData::id)
-					.map(Id::asLong)
-					.block());
+				.createDM(DMCreateRequest.builder().recipientId(SnowFlake.str(userId)).build())
+				.map(ChannelData::id)
+				.map(Id::asLong)
+				.block());
 		} catch (Exception ex) {
 			throw new GnomeException("This command requires user's DMs to be enabled for this guild!");
 		}
@@ -106,10 +106,10 @@ public class DM {
 			}
 
 			return Objects.requireNonNull(handler.client.getRestClient().getUserService()
-					.createDM(DMCreateRequest.builder().recipientId(SnowFlake.str(userId)).build())
-					.map(data -> EntityUtil.getChannel(handler.client, data))
-					.cast(PrivateChannel.class)
-					.block()
+				.createDM(DMCreateRequest.builder().recipientId(SnowFlake.str(userId)).build())
+				.map(data -> EntityUtil.getChannel(handler.client, data))
+				.cast(PrivateChannel.class)
+				.block()
 			);
 		} catch (Exception ex) {
 			throw new GnomeException("This command requires user's DMs to be enabled for this guild!");
@@ -155,9 +155,9 @@ public class DM {
 
 			if (log && message.getContent() != null) {
 				sendInDmChannel(handler, null, user, MessageBuilder.create()
-						.content(message.getContent())
-						.webhookName("Gnome")
-						.webhookAvatarUrl(Assets.AVATAR.getPath(handler.app))
+					.content(message.getContent())
+					.webhookName("Gnome")
+					.webhookAvatarUrl(Assets.AVATAR.getPath(handler.app))
 				);
 			}
 
@@ -189,9 +189,9 @@ public class DM {
 		}
 
 		sendInDmChannel(handler, privateChannel, author, MessageBuilder.create()
-				.content(builder.toString().trim())
-				.webhookName(author.globalName().orElse(author.username()))
-				.webhookAvatarUrl(Utils.getAvatarURL(author))
+			.content(builder.toString().trim())
+			.webhookName(author.globalName().orElse(author.username()))
+			.webhookAvatarUrl(Utils.getAvatarURL(author))
 		);
 	}
 
@@ -199,9 +199,9 @@ public class DM {
 		channel.createMessage(content).block();
 
 		sendInDmChannel(handler, privateChannel, author, MessageBuilder.create()
-				.content(content)
-				.webhookName("Gnome")
-				.webhookAvatarUrl(Assets.AVATAR.getPath(handler.app))
+			.content(content)
+			.webhookName("Gnome")
+			.webhookAvatarUrl(Assets.AVATAR.getPath(handler.app))
 		);
 	}
 }

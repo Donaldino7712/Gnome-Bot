@@ -20,21 +20,21 @@ public class PasteCommands extends ApplicationCommands {
 	public static final Pattern URL_REGEX = Pattern.compile("https://(?:media|cdn)\\.(?:discordapp|discord)\\.(?:com|net)/attachments/(\\d+)/(\\d+)/([^\\s?]+)");
 
 	public static final ChatInputInteractionBuilder COMMAND = chatInputInteraction("paste")
-			.supportsDM()
-			.add(sub("create")
-					.description("Create paste link for content from clipboard")
-					.run(PasteCommands::create)
-			)
-			.add(sub("message")
-					.description("Find attachment from message link")
-					.add(string("message-link").required())
-					.run(PasteCommands::message)
-			);
+		.supportsDM()
+		.add(sub("create")
+			.description("Create paste link for content from clipboard")
+			.run(PasteCommands::create)
+		)
+		.add(sub("message")
+			.description("Find attachment from message link")
+			.add(string("message-link").required())
+			.run(PasteCommands::message)
+		);
 
 	private static void create(ChatInputInteractionEventWrapper event) {
 		event.respondModal("create-paste", "Create Paste",
-				TextInput.paragraph("content", "Content").required(true),
-				TextInput.small("filename", "File name").required(true).prefilled("file.txt")
+			TextInput.paragraph("content", "Content").required(true),
+			TextInput.small("filename", "File name").required(true).prefilled("file.txt")
 		);
 	}
 
@@ -67,8 +67,8 @@ public class PasteCommands extends ApplicationCommands {
 				}
 
 				event.respond(MessageBuilder.create()
-						.content("Paste version of " + attachments.stream().map(a -> "`" + a.getFilename() + "`").collect(Collectors.joining(", ")) + " from <@" + author + ">")
-						.addComponent(ActionRow.of(buttons))
+					.content("Paste version of " + attachments.stream().map(a -> "`" + a.getFilename() + "`").collect(Collectors.joining(", ")) + " from <@" + author + ">")
+					.addComponent(ActionRow.of(buttons))
 				);
 			} else {
 				throw new GnomeException("Message not found!");

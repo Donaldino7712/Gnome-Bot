@@ -41,12 +41,12 @@ public class ScheduledTask extends WrappedDocument<ScheduledTask> {
 
 	public ScheduledTask(WrappedCollection<ScheduledTask> c, String type, long end, long guild, long channel, long user, String content) {
 		this(c, MapWrapper.wrap(new Document("_id", new ObjectId())
-				.append("type", type)
-				.append("end", end)
-				.append("guild", guild)
-				.append("channel", channel)
-				.append("user", user)
-				.append("content", content)
+			.append("type", type)
+			.append("end", end)
+			.append("guild", guild)
+			.append("channel", channel)
+			.append("user", user)
+			.append("content", content)
 		));
 	}
 

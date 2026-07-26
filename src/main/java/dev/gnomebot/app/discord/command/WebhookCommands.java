@@ -20,24 +20,24 @@ public class WebhookCommands extends ApplicationCommands {
 	public static final Pattern WEBHOOK_PATTERN = Pattern.compile("https://.*discord(?:app)?.com/api/(?:v\\d+/)?webhooks/(\\d+)/([\\w-]+)");
 
 	public static final ChatInputInteractionBuilder COMMAND = chatInputInteraction("webhook")
-			.supportsDM()
-			.description("Manage your webhooks")
-			.add(sub("add")
-					.add(string("name").required())
-					.add(string("url").required())
-					.run(WebhookCommands::add)
-			)
-			.add(sub("remove")
-					.add(string("name").required())
-					.run(WebhookCommands::remove)
-			)
-			.add(sub("list")
-					.run(WebhookCommands::list)
-			)
-			.add(sub("execute")
-					.add(channel("channel"))
-					.run(WebhookCommands::execute)
-			);
+		.supportsDM()
+		.description("Manage your webhooks")
+		.add(sub("add")
+			.add(string("name").required())
+			.add(string("url").required())
+			.run(WebhookCommands::add)
+		)
+		.add(sub("remove")
+			.add(string("name").required())
+			.run(WebhookCommands::remove)
+		)
+		.add(sub("list")
+			.run(WebhookCommands::list)
+		)
+		.add(sub("execute")
+			.add(channel("channel"))
+			.run(WebhookCommands::execute)
+		);
 
 	private static void add(ChatInputInteractionEventWrapper event) {
 		event.acknowledgeEphemeral();
@@ -99,9 +99,9 @@ public class WebhookCommands extends ApplicationCommands {
 		var ci = event.get("channel").asChannelInfoOrCurrent();
 
 		event.respondModal("webhook/" + ci.id + "/0", "Execute Webhook",
-				TextInput.paragraph("content", "Content", 0, 2000).required(false),
-				TextInput.small("username", "Username", 0, 100).required(false).placeholder("Override username"),
-				TextInput.small("avatar_url", "Avatar URL").required(false).placeholder("Override avatar")
+			TextInput.paragraph("content", "Content", 0, 2000).required(false),
+			TextInput.small("username", "Username", 0, 100).required(false).placeholder("Override username"),
+			TextInput.small("avatar_url", "Avatar URL").required(false).placeholder("Override avatar")
 		);
 	}
 
@@ -146,11 +146,11 @@ public class WebhookCommands extends ApplicationCommands {
 			var lines = ComplexMessage.of(event.context.gc, message).getLines();
 
 			event.respondModal("webhook/" + event.context.channelInfo.id + "/" + message.getId().asString(), "Edit Webhook Message",
-					TextInput.paragraph("content", "Content").required(true).prefilled(String.join("\n", lines)).placeholder(MacroCommands.COMPLEX_PLACEHOLDER)
+				TextInput.paragraph("content", "Content").required(true).prefilled(String.join("\n", lines)).placeholder(MacroCommands.COMPLEX_PLACEHOLDER)
 			);
 		} else {
 			event.respondModal("webhook/" + event.context.channelInfo.id + "/" + message.getId().asString(), "Edit Webhook Message",
-					TextInput.paragraph("content", "Content").required(true).prefilled(message.getContent()).placeholder(MacroCommands.COMPLEX_PLACEHOLDER)
+				TextInput.paragraph("content", "Content").required(true).prefilled(message.getContent()).placeholder(MacroCommands.COMPLEX_PLACEHOLDER)
 			);
 		}
 	}

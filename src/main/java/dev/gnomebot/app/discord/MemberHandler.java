@@ -87,10 +87,10 @@ public class MemberHandler {
 
 		if (accountAge <= 604800 && gc.logNewAccountsChannel.isSet()) {
 			var sb = member.getMention() +
-					" (" +
-					member.getTag() +
-					") is a new account: " +
-					Utils.formatRelativeDate(member.getId().getTimestamp());
+				" (" +
+				member.getTag() +
+				") is a new account: " +
+				Utils.formatRelativeDate(member.getId().getTimestamp());
 			gc.logNewAccountsChannel.messageChannel().ifPresent(c -> c.createMessage(sb).subscribe());
 		}
 
@@ -204,9 +204,9 @@ public class MemberHandler {
 			var reason = entry == null ? "Not specified" : entry.getReason().orElse("Not specified");
 
 			gc.auditLog(GnomeAuditLogEntry.builder(GnomeAuditLogEntry.Type.BAN)
-					.user(event.getUser())
-					.source(responsible)
-					.content(reason)
+				.user(event.getUser())
+				.source(responsible)
+				.content(reason)
 			);
 
 			if (responsible != null && responsible.isBot()) {
@@ -231,8 +231,8 @@ public class MemberHandler {
 	@Nullable
 	private static AuditLogEntry findBanEntry(GuildCollections gc, long target) throws Exception {
 		for (var part : gc.getGuild().getAuditLog(AuditLogQuerySpec.builder()
-				.actionType(ActionType.MEMBER_BAN_ADD)
-				.build()
+			.actionType(ActionType.MEMBER_BAN_ADD)
+			.build()
 		).take(10L, true).toIterable()) {
 			for (var entry : part.getEntries()) {
 				if (entry.getTargetId().isPresent() && entry.getTargetId().get().asLong() == target) {

@@ -33,9 +33,9 @@ public class CachedChannels implements Iterable<TopLevelChannelInfo> {
 		this.uniqueNameMap = new LinkedHashMap<>();
 
 		for (var ch : gc.getGuild().getChannels()
-				.ofType(CategorizableChannel.class)
-				.sort(Comparator.comparing(CategorizableChannel::getRawPosition).thenComparing(CategorizableChannel::getId))
-				.toIterable()
+			.ofType(CategorizableChannel.class)
+			.sort(Comparator.comparing(CategorizableChannel::getRawPosition).thenComparing(CategorizableChannel::getId))
+			.toIterable()
 		) {
 			var id = ch.getId().asLong();
 			var name = ch.getName();

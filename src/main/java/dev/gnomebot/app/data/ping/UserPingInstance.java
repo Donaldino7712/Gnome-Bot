@@ -61,9 +61,9 @@ public record UserPingInstance(Ping[] pings, long user, PingDestination destinat
 	@Override
 	public String toString() {
 		return "{pings=" + Arrays.toString(pings) +
-				", user=" + user +
-				", destination=" + destination +
-				", config=" + config +
-				'}';
+			", user=" + user +
+			", destination=" + destination +
+			", config=" + config +
+			'}';
 	}
 }

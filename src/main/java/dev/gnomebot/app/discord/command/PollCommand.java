@@ -23,15 +23,15 @@ import java.util.List;
 
 public class PollCommand extends ApplicationCommands {
 	public static final ChatInputInteractionBuilder COMMAND = chatInputInteraction("poll")
-			.description("Create a poll")
-			.run(PollCommand::submit);
+		.description("Create a poll")
+		.run(PollCommand::submit);
 
 	private static final List<String> NO_YES = List.of("No", "Yes");
 
 	private static void submit(ChatInputInteractionEventWrapper event) {
 		event.respondModal("poll", "Create a Poll",
-				TextInput.paragraph("question", "Question").required(true).placeholder("Is today a good day?"),
-				TextInput.paragraph("options", "Options").required(false).placeholder("No\nYes")
+			TextInput.paragraph("question", "Question").required(true).placeholder("Is today a good day?"),
+			TextInput.paragraph("options", "Options").required(false).placeholder("No\nYes")
 		);
 	}
 

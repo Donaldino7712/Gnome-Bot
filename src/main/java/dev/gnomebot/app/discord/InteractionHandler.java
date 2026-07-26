@@ -432,7 +432,7 @@ public class InteractionHandler {
 				event.respond("Kicked <@" + userId + ">");
 			}
 			case "ban" -> {
-				event.context.gc.getGuild().ban(SnowFlake.convert(userId), BanQuerySpec.builder().deleteMessageDays(1).reason(reason).build()).subscribe();
+				event.context.gc.getGuild().ban(SnowFlake.convert(userId), BanQuerySpec.builder().deleteMessageSeconds(3600).reason(reason).build()).subscribe();
 				event.respond("Banned <@" + userId + ">");
 			}
 			case "unmute" -> {

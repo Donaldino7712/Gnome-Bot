@@ -363,10 +363,10 @@ public class MessageHandler {
 
 			try {
 				var xpDoc = gc.messageCount.query()
-						.eq("date", d)
-						.eq("channel", channelInfo.id)
-						.eq("user", user.getId().asLong())
-						.firstDocument();
+					.eq("date", d)
+					.eq("channel", channelInfo.id)
+					.eq("user", user.getId().asLong())
+					.firstDocument();
 
 				if (xpDoc != null) {
 					gc.messageCount.query(xpDoc.getObjectId("_id")).update(Updates.inc("count", 1L));
@@ -389,10 +389,10 @@ public class MessageHandler {
 			if (xp > 0) {
 				try {
 					var xpDoc = gc.messageXp.query()
-							.eq("date", d)
-							.eq("channel", channelInfo.id)
-							.eq("user", user.getId().asLong())
-							.firstDocument();
+						.eq("date", d)
+						.eq("channel", channelInfo.id)
+						.eq("user", user.getId().asLong())
+						.firstDocument();
 
 					if (xpDoc != null) {
 						gc.messageXp.query(xpDoc.getObjectId("_id")).update(Updates.inc("xp", xp));
@@ -463,10 +463,10 @@ public class MessageHandler {
 				}
 
 				gc.auditLog(GnomeAuditLogEntry.builder(GnomeAuditLogEntry.Type.URL_SHORTENER)
-						.channel(channelInfo.id)
-						.message(message)
-						.user(member)
-						.content(content)
+					.channel(channelInfo.id)
+					.message(message)
+					.user(member)
+					.content(content)
 				);
 			}
 
@@ -474,10 +474,10 @@ public class MessageHandler {
 				handler.suspiciousMessageModLog(gc, gc.adminLogChannel, discordMessage, member, "Suspicious Invite", null);
 
 				gc.auditLog(GnomeAuditLogEntry.builder(GnomeAuditLogEntry.Type.DISCORD_INVITE)
-						.channel(channelInfo.id)
-						.message(message)
-						.user(member)
-						.content(content)
+					.channel(channelInfo.id)
+					.message(message)
+					.user(member)
+					.content(content)
 				);
 			}
 
@@ -485,10 +485,10 @@ public class MessageHandler {
 				handler.suspiciousMessageModLog(gc, gc.logIpAddressesChannel, discordMessage, member, "IP Address", null);
 
 				gc.auditLog(GnomeAuditLogEntry.builder(GnomeAuditLogEntry.Type.IP_ADDRESS)
-						.channel(channelInfo.id)
-						.message(message)
-						.user(member)
-						.content(content)
+					.channel(channelInfo.id)
+					.message(message)
+					.user(member)
+					.content(content)
 				);
 			}
 		}
@@ -548,11 +548,11 @@ public class MessageHandler {
 			}
 
 			gc.auditLog(GnomeAuditLogEntry.builder(GnomeAuditLogEntry.Type.ADMIN_PING)
-					.channel(channelInfo.id)
-					.message(message)
-					.user(referenceMessage != null ? referenceMessage.getUserData().id().asLong() : 0L)
-					.source(member)
-					.content(c.toString().trim())
+				.channel(channelInfo.id)
+				.message(message)
+				.user(referenceMessage != null ? referenceMessage.getUserData().id().asLong() : 0L)
+				.source(member)
+				.content(c.toString().trim())
 			);
 		}
 
@@ -594,9 +594,9 @@ public class MessageHandler {
 				// (u.endsWith("s") ? (u + "’") : (u + "’s")) + " Post Discussion"
 
 				outputMessageChannel = Objects.requireNonNull(message.startThread(StartThreadFromMessageSpec.builder()
-						.name(n)
-						// .autoArchiveDuration(ThreadChannel.AutoArchiveDuration.DURATION2)
-						.build()
+					.name(n)
+					// .autoArchiveDuration(ThreadChannel.AutoArchiveDuration.DURATION2)
+					.build()
 				).block());
 			} catch (Exception ex) {
 				Log.error("Failed to create a thread!");
@@ -656,10 +656,10 @@ public class MessageHandler {
 								if (attachment.getContentType().isPresent() && attachment.getContentType().get().startsWith("image/")) {
 									try {
 										aiFiles.add(Pair.of(attachment.getContentType().get(), App.HTTP_CLIENT.send(
-												App.request(attachment.getProxyUrl())
-														.GET()
-														.build(),
-												HttpResponse.BodyHandlers.ofByteArray()).body())
+											App.request(attachment.getProxyUrl())
+												.GET()
+												.build(),
+											HttpResponse.BodyHandlers.ofByteArray()).body())
 										);
 									} catch (Exception ex) {
 									}
@@ -681,7 +681,11 @@ public class MessageHandler {
 							}
 
 							if (list.isEmpty()) {
-								list.add("That's weird… I couldn't come up with an answer…");
+								if (response.code() == 503) {
+									list.add("Gnome is currently busy helping other people…");
+								} else {
+									list.add("That's weird… I couldn't come up with an answer…");
+								}
 							}
 
 							// list.set(0, member.getMention() + ": " + list.getFirst());

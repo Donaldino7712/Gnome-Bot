@@ -62,10 +62,10 @@ public class WarnCommand extends ApplicationCommands {
 		});
 
 		event.context.gc.auditLog(GnomeAuditLogEntry.builder(GnomeAuditLogEntry.Type.WARN)
-				.user(user)
-				.source(event.context.sender)
-				.content(reason)
-				.flags(GnomeAuditLogEntry.Flags.DM, dm)
+			.user(user)
+			.source(event.context.sender)
+			.content(reason)
+			.flags(GnomeAuditLogEntry.Flags.DM, dm)
 		);
 
 		// m.addReaction(DiscordHandler.EMOJI_COMMAND_ERROR).block();

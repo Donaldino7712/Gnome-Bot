@@ -32,10 +32,10 @@ public class CommandOption extends BasicOption {
 	@Override
 	public String toString() {
 		return "CommandOption{" +
-				"name='" + name + '\'' +
-				", value='" + value + '\'' +
-				(focused ? ", focused=true" : "") +
-				'}';
+			"name='" + name + '\'' +
+			", value='" + value + '\'' +
+			(focused ? ", focused=true" : "") +
+			'}';
 	}
 
 	public Optional<User> asUser() {

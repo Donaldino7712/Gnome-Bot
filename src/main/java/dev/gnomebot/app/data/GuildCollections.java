@@ -46,6 +46,8 @@ import discord4j.discordjson.json.UserData;
 import discord4j.rest.util.Image;
 import discord4j.rest.util.Permission;
 import discord4j.rest.util.PermissionSet;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import org.bson.Document;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,8 +63,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class GuildCollections {
 	public final Databases db;
@@ -136,6 +138,7 @@ public class GuildCollections {
 	private final Map<Long, Long> memberLogThreadCache;
 	private final Map<Long, Long> appealThreadCache;
 	private List<RelatedGuild.Group> relatedGuilds;
+	private Long2ObjectMap<Member> memberCache;
 
 	public GuildCollections(Databases d, long g) {
 		db = d;
@@ -260,6 +263,14 @@ public class GuildCollections {
 
 	public Guild getGuild() {
 		return Objects.requireNonNull(db.app.discordHandler.client.getGuildById(SnowFlake.convert(guildId)).block());
+	}
+
+	public Long2ObjectMap<Member> getMembers() {
+		if (memberCache == null) {
+			memberCache = new Long2ObjectOpenHashMap<>(getGuild().getMembers().toStream().collect(Collectors.toMap(u -> u.getId().asLong(), Function.identity())));
+		}
+
+		return memberCache;
 	}
 
 	public void saveInfo() {
@@ -528,6 +539,7 @@ public class GuildCollections {
 		channels = null;
 		roles = null;
 		macroUseMap = null;
+		memberCache = null;
 	}
 
 	public void guildUpdated(@Nullable Guild g) {
@@ -593,6 +605,7 @@ public class GuildCollections {
 			// App.LOGGER.refreshedMemberCache();
 		}
 
+		refreshCache();
 		refreshPermissions();
 	}
 
@@ -620,14 +633,6 @@ public class GuildCollections {
 		}
 	}
 
-	public Stream<Member> getMemberStream() {
-		return getGuild().getMembers().toStream();
-	}
-
-	public List<Member> getMembers() {
-		return getMemberStream().toList();
-	}
-
 	public void usernameSuggestions(ChatCommandSuggestionEvent event) {
 		if (recentUserSuggestions == null) {
 			recentUserSuggestions = new ArrayList<>();
@@ -639,7 +644,7 @@ public class GuildCollections {
 
 			var set = recentUsers.stream().map(RecentUser::id).collect(Collectors.toSet());
 
-			for (var member : getMembers()) {
+			for (var member : getMembers().values()) {
 				if (!set.contains(member.getId().asLong())) {
 					recentUserSuggestions.add(new ChatCommandSuggestion(member.getTag(), member.getId().asString(), member.getTag().toLowerCase(), 0));
 				}
@@ -850,12 +855,12 @@ public class GuildCollections {
 				}
 
 				var thread = msgc.startPublicThreadWithoutMessage(StartThreadWithoutMessageSpec.builder()
-						.type(type == 0 ? ThreadChannel.Type.GUILD_PUBLIC_THREAD : ThreadChannel.Type.GUILD_PRIVATE_THREAD)
-						.invitable(false)
-						.reason(user.username() + " Member Channel")
-						.name(user.username())
-						.autoArchiveDuration(type == 0 ? ThreadChannel.AutoArchiveDuration.DURATION1 : ThreadChannel.AutoArchiveDuration.DURATION2)
-						.build()
+					.type(type == 0 ? ThreadChannel.Type.GUILD_PUBLIC_THREAD : ThreadChannel.Type.GUILD_PRIVATE_THREAD)
+					.invitable(false)
+					.reason(user.username() + " Member Channel")
+					.name(user.username())
+					.autoArchiveDuration(type == 0 ? ThreadChannel.AutoArchiveDuration.DURATION1 : ThreadChannel.AutoArchiveDuration.DURATION2)
+					.build()
 				).block();
 
 				memberLogThreads.query(user.id().asLong()).eq("type", type).eq("channel", ci.id).upsert(List.of(Updates.set("thread", thread.getId().asLong())));
@@ -889,12 +894,12 @@ public class GuildCollections {
 
 				if (adminRole != 0L) {
 					thread.createMessage(MessageBuilder.create("...")
-							.allowRoleMentions(adminRole)
-							.toMessageCreateSpec()
+						.allowRoleMentions(adminRole)
+						.toMessageCreateSpec()
 					).flatMap(m -> m.edit(MessageBuilder.create()
-							.allowRoleMentions(adminRole)
-							.content("Adding <@&" + adminRole + ">...")
-							.toMessageEditSpec()
+						.allowRoleMentions(adminRole)
+						.content("Adding <@&" + adminRole + ">...")
+						.toMessageEditSpec()
 					)).flatMap(Message::delete).subscribe();
 				}
 

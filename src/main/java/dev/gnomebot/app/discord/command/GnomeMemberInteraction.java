@@ -17,7 +17,7 @@ import java.util.function.Predicate;
 
 public class GnomeMemberInteraction extends ApplicationCommands {
 	public static final UserInteractionBuilder USER_INTERACTION = userInteraction("Other Gnome Actions")
-			.run(GnomeMemberInteraction::run);
+		.run(GnomeMemberInteraction::run);
 
 	@FunctionalInterface
 	public interface Callback {
@@ -55,8 +55,8 @@ public class GnomeMemberInteraction extends ApplicationCommands {
 	}
 
 	public static final List<Action> ACTIONS = List.of(
-			new Action("avatar", "Avatar", AvatarCommand::memberInteraction).emoji("\uD83C\uDFA8"),
-			new Action("whois", "Member Info", WhoisCommand::memberInteraction).emoji("ℹ️")
+		new Action("avatar", "Avatar", AvatarCommand::memberInteraction).emoji("\uD83C\uDFA8"),
+		new Action("whois", "Member Info", WhoisCommand::memberInteraction).emoji("ℹ️")
 	);
 
 	private static void run(UserInteractionEventWrapper event) {

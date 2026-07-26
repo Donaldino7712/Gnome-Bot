@@ -72,9 +72,9 @@ public class App {
 	public static App instance;
 
 	public static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
-			.connectTimeout(Duration.ofSeconds(15L))
-			.followRedirects(HttpClient.Redirect.NORMAL)
-			.build();
+		.connectTimeout(Duration.ofSeconds(15L))
+		.followRedirects(HttpClient.Redirect.NORMAL)
+		.build();
 
 	public static HttpRequest.Builder request(URI uri) {
 		return HttpRequest.newBuilder().uri(uri).header("User-Agent", "GnomeBot/1.0 (https://gnomebot.dev/)");
@@ -121,6 +121,7 @@ public class App {
 		commands.add("restart", this::restart);
 		commands.add("rebuild", this::rebuild);
 		commands.add("reload", this::reload);
+		commands.add("threads", this::threads);
 		commands.add("port", List.of("input"), this::port);
 		commands.add("stats", this::stats);
 		commands.add("debug", this::debug);
@@ -204,7 +205,8 @@ public class App {
 		// webServer.addWS("/api/cli", WSHandler.CLI);
 
 		webServer.setPort(config.web.port);
-		webServer.setKeepAliveTimeout(Duration.ofMinutes(5L));
+		webServer.setMaxKeepAliveConnections(3);
+		webServer.setKeepAliveTimeout(Duration.ofMinutes(1L));
 		webServer.start();
 
 		Log.info("Loading databases...");
@@ -365,6 +367,19 @@ public class App {
 		GuildPaths.CUSTOM_NAMES.invalidate();
 		GuildPaths.INVERTED_CUSTOM_NAMES.invalidate();
 		AppRootTag.RESOURCE_REFRESH = "?%08x".formatted(UUID.randomUUID().hashCode());
+	}
+
+	public void threads() {
+		var stacks = Thread.getAllStackTraces().entrySet();
+		var format = "- %0" + String.valueOf(stacks.size()).length() + "d %s : %s";
+		int index = 1;
+
+		for (var stack : stacks) {
+			Log.info(format.formatted(index, stack.getKey().getName(), stack.getValue().length == 0 ? "No Stack Trace" : stack.getValue()[0]));
+			index++;
+		}
+
+		Log.success("Currently " + stacks.size() + " active threads");
 	}
 
 	public void schedule(Duration timer, String type, long guild, long channel, long user, String content) {
@@ -567,9 +582,9 @@ public class App {
 		var channel = (MessageChannel) discordHandler.client.getChannelById(SnowFlake.convert(s)).block();
 
 		channel.createMessage(MessageCreateSpec.builder()
-				.content("# Restart Gnome Bot")
-				.addComponent(ActionRow.of(discord4j.core.object.component.Button.danger("restart-bot/" + config.discord.restart_button_token, Emojis.ALERT, "Restart")))
-				.build()
+			.content("# Restart Gnome Bot")
+			.addComponent(ActionRow.of(discord4j.core.object.component.Button.danger("restart-bot/" + config.discord.restart_button_token, Emojis.ALERT, "Restart")))
+			.build()
 		).subscribe();
 	}
 

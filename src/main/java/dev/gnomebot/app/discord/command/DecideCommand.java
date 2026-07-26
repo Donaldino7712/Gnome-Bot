@@ -4,10 +4,10 @@ import dev.gnomebot.app.discord.Emojis;
 
 public class DecideCommand extends ApplicationCommands {
 	public static final ChatInputInteractionBuilder COMMAND = chatInputInteraction("decide")
-			.supportsDM()
-			.description("Decides fate")
-			.add(string("text"))
-			.run(DecideCommand::run);
+		.supportsDM()
+		.description("Decides fate")
+		.add(string("text"))
+		.run(DecideCommand::run);
 
 	private static void run(ChatInputInteractionEventWrapper event) {
 		event.acknowledge();

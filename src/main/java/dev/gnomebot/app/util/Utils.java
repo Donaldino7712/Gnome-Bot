@@ -56,7 +56,7 @@ public class Utils {
 
 	// TODO: Get rid of this eventually
 	public static URLRequest<InputStream> internalRequest(App app, String path) {
-		return URLRequest.of(app.url(path)).addHeader("Authorization", "Bearer " + app.db.selfToken.token);
+		return URLRequest.of("http://localhost:" + app.config.web.port + "/" + path).addHeader("Authorization", "Bearer " + app.db.selfToken.token);
 	}
 
 	public static String reactionToString(Emoji emoji) {
@@ -92,10 +92,10 @@ public class Utils {
 		var request = new EditMessageComponentsRequest(c);
 
 		Routes.MESSAGE_EDIT.newRequest(message.getChannelId().asLong(), message.getId().asLong())
-				.body(request)
-				.exchange(App.instance.discordHandler.client.getCoreResources().getRouter())
-				.skipBody()
-				.subscribe();
+			.body(request)
+			.exchange(App.instance.discordHandler.client.getCoreResources().getRouter())
+			.skipBody()
+			.subscribe();
 	}
 
 	public static int getComponentWidth(ActionComponent component) {

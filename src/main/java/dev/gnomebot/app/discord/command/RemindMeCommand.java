@@ -7,12 +7,12 @@ import java.time.Instant;
 
 public class RemindMeCommand extends ApplicationCommands {
 	public static final ChatInputInteractionBuilder COMMAND = chatInputInteraction("remindme")
-			.supportsDM()
-			.description("Set a reminder")
-			.add(string("text").required())
-			.add(time("timer", false, true).description("Format can be '10 hours' or '5 days' etc"))
-			.add(bool("private"))
-			.run(RemindMeCommand::run);
+		.supportsDM()
+		.description("Set a reminder")
+		.add(string("text").required())
+		.add(time("timer", false, true).description("Format can be '10 hours' or '5 days' etc"))
+		.add(bool("private"))
+		.run(RemindMeCommand::run);
 
 	private static void run(ChatInputInteractionEventWrapper event) {
 		var text = event.get("text").asString();

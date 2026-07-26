@@ -53,9 +53,9 @@ public class BanCommand extends ApplicationCommands {
 		}
 
 		event.context.gc.getGuild().ban(user.getId(), BanQuerySpec.builder()
-				.reason(reason)
-				.deleteMessageDays(deleteMessages ? 1 : null)
-				.build()
+			.reason(reason)
+			.deleteMessageSeconds(deleteMessages ? 3600 : null)
+			.build()
 		).subscribe();
 
 		event.context.gc.adminLogChannelEmbed(user.getUserData(), event.context.gc.adminLogChannel, spec -> {
@@ -68,11 +68,11 @@ public class BanCommand extends ApplicationCommands {
 		});
 
 		event.context.gc.auditLog(GnomeAuditLogEntry.builder(GnomeAuditLogEntry.Type.BAN)
-				.user(user)
-				.source(event.context.sender)
-				.content(reason)
-				.flags(GnomeAuditLogEntry.Flags.DM, dm)
-				.flags(GnomeAuditLogEntry.Flags.DELETED_MESSAGES, deleteMessages)
+			.user(user)
+			.source(event.context.sender)
+			.content(reason)
+			.flags(GnomeAuditLogEntry.Flags.DM, dm)
+			.flags(GnomeAuditLogEntry.Flags.DELETED_MESSAGES, deleteMessages)
 		);
 
 		// m.addReaction(DiscordHandler.EMOJI_COMMAND_ERROR).block();
@@ -83,7 +83,7 @@ public class BanCommand extends ApplicationCommands {
 
 	public static void banButtonCallback(ComponentEventWrapper event, long other, String reason, Confirm confirm) {
 		event.context.checkSenderAdmin();
-		event.context.gc.getGuild().ban(SnowFlake.convert(other), BanQuerySpec.builder().deleteMessageDays(1).reason(reason).build()).subscribe();
+		event.context.gc.getGuild().ban(SnowFlake.convert(other), BanQuerySpec.builder().deleteMessageSeconds(3600).reason(reason).build()).subscribe();
 		Utils.editComponents(event.event.getMessage().orElse(null), Collections.singletonList(ActionRow.of(Button.danger("none", Emojis.WARNING, "Banned by " + event.context.sender.getUsername() + "!")).getData()));
 		event.respond("Banned <@" + other + ">");
 	}

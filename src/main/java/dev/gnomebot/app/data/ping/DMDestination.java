@@ -26,11 +26,11 @@ public class DMDestination implements PingDestination {
 			content.append("[Ping ➤](").append(pingData.url()).append(") from ").append(pingData.url()).append("\n").append(pingData.content());
 
 			app.discordHandler.client.getRestClient().getChannelService().createMessage(dmChannel, MessageBuilder.create(EmbedBuilder.create()
-							.author(pingData.username(), pingData.avatar())
-							.description(content.toString())
-					).toMultipartMessageCreateRequest())
-					.timeout(Duration.ofSeconds(5L))
-					.block();
+					.author(pingData.username(), pingData.avatar())
+					.description(content.toString())
+				).toMultipartMessageCreateRequest())
+				.timeout(Duration.ofSeconds(5L))
+				.block();
 		} catch (Exception ex) {
 			Log.error("Failed to DM user " + targetId + ": " + ex);
 		}

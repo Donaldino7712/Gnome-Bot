@@ -98,13 +98,13 @@ public class PasteHandlers {
 		var contentType = attachment.contentType().toOptional().orElse("");
 
 		root.content.div()
-				.id("paste-text")
-				.classes("pastetext")
-				.attr("data-paste-filename", attachment.filename())
-				.attr("data-paste-url", attachment.url())
-				.attr("data-paste-content-type", contentType.isEmpty() ? MimeType.TEXT : contentType)
-				.attr("data-zip-path", zipPath)
-				.h3().spanstr("Loading...");
+			.id("paste-text")
+			.classes("pastetext")
+			.attr("data-paste-filename", attachment.filename())
+			.attr("data-paste-url", attachment.url())
+			.attr("data-paste-content-type", contentType.isEmpty() ? MimeType.TEXT : contentType)
+			.attr("data-zip-path", zipPath)
+			.h3().spanstr("Loading...");
 
 
 		return root.asResponse().publicCache(Duration.ofMinutes(5L));
@@ -198,13 +198,13 @@ public class PasteHandlers {
 		root.content.classes("paste");
 
 		root.content.div()
-				.id("paste-text")
-				.classes("pastetext")
-				.attr("data-paste-filename", filename)
-				.attr("data-paste-url", "https://api.mclo.gs/1/log/" + id + "?raw&insights")
-				.attr("data-paste-content-type", MimeType.TEXT)
-				.attr("data-zip-path", "")
-				.h3().spanstr("Loading...");
+			.id("paste-text")
+			.classes("pastetext")
+			.attr("data-paste-filename", filename)
+			.attr("data-paste-url", "https://api.mclo.gs/1/log/" + id + "?raw&insights")
+			.attr("data-paste-content-type", MimeType.TEXT)
+			.attr("data-zip-path", "")
+			.h3().spanstr("Loading...");
 
 
 		return root.asResponse().publicCache(Duration.ofMinutes(5L));
@@ -451,14 +451,14 @@ public class PasteHandlers {
 
 		if (userData.id().asLong() == db.app.discordHandler.selfId && (m.getData().components().isAbsent() || m.getData().components().get().isEmpty())) {
 			m.edit(MessageBuilder.create()
-					.addComponent(ActionRow.of(buttons))
-					.toMessageEditSpec()
+				.addComponent(ActionRow.of(buttons))
+				.toMessageEditSpec()
 			).block();
 		} else {
 			var r = outputMessageChannel.createMessage(MessageBuilder.create()
-					.content("Paste version of " + buttons.stream().map(a -> "`" + a.getLabel().orElse("?").replace("View ", "") + "`").collect(Collectors.joining(", ")) + " from <@" + userData.id().asString() + ">")
-					.addComponent(ActionRow.of(buttons))
-					.toMessageCreateSpec()
+				.content("Paste version of " + buttons.stream().map(a -> "`" + a.getLabel().orElse("?").replace("View ", "") + "`").collect(Collectors.joining(", ")) + " from <@" + userData.id().asString() + ">")
+				.addComponent(ActionRow.of(buttons))
+				.toMessageCreateSpec()
 			).block();
 
 			MessageHandler.addAutoDelete(m.getId().asLong(), new MessageId(r.getChannelId().asLong(), r.getId().asLong()));

@@ -38,7 +38,7 @@ public class RegexKickCommand extends ApplicationCommands {
 		var reason = event.get("reason").asString("scam");
 		List<Member> members = new ArrayList<>();
 
-		for (var member : event.context.gc.getMembers()) {
+		for (var member : event.context.gc.getMembers().values()) {
 			if (pattern.matcher(member.getUsername()).matches()) {
 				members.add(member);
 			}
@@ -54,9 +54,9 @@ public class RegexKickCommand extends ApplicationCommands {
 				member.kick(reason).subscribe();
 
 				event.context.gc.auditLog(GnomeAuditLogEntry.builder(GnomeAuditLogEntry.Type.BAN)
-						.user(member)
-						.source(event.context.sender)
-						.content(reason)
+					.user(member)
+					.source(event.context.sender)
+					.content(reason)
 				);
 			}
 
@@ -68,13 +68,13 @@ public class RegexKickCommand extends ApplicationCommands {
 			event1.edit().respond("**Banned " + members.size() + " members**");
 
 			for (var member : members) {
-				member.ban(BanQuerySpec.builder().reason(reason).deleteMessageDays(1).build()).subscribe();
+				member.ban(BanQuerySpec.builder().reason(reason).deleteMessageSeconds(3600).build()).subscribe();
 
 				event.context.gc.auditLog(GnomeAuditLogEntry.builder(GnomeAuditLogEntry.Type.BAN)
-						.user(member)
-						.source(event.context.sender)
-						.content(reason)
-						.flags(GnomeAuditLogEntry.Flags.DM)
+					.user(member)
+					.source(event.context.sender)
+					.content(reason)
+					.flags(GnomeAuditLogEntry.Flags.DM)
 				);
 			}
 
@@ -85,12 +85,12 @@ public class RegexKickCommand extends ApplicationCommands {
 		actionsToRemove.add(idBan);
 
 		event.respond(MessageBuilder.create("Matched " + members.size() + " members:")
-				.addFile("kicked_members.txt", members.stream()
-						.map(m -> m.getId().asString() + " " + m.getTag())
-						.collect(Collectors.joining("\n"))
-						.getBytes(StandardCharsets.UTF_8)
-				)
-				.addComponentRow(Button.secondary(idKick, "Kick"), Button.danger(idBan, "Ban"))
+			.addFile("kicked_members.txt", members.stream()
+				.map(m -> m.getId().asString() + " " + m.getTag())
+				.collect(Collectors.joining("\n"))
+				.getBytes(StandardCharsets.UTF_8)
+			)
+			.addComponentRow(Button.secondary(idKick, "Kick"), Button.danger(idBan, "Ban"))
 		);
 	}
 }

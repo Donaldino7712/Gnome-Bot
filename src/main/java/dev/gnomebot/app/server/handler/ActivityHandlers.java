@@ -4,6 +4,7 @@ import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import dev.gnomebot.app.data.DiscordMessage;
+import dev.gnomebot.app.data.GuildCollections;
 import dev.gnomebot.app.discord.Emojis;
 import dev.gnomebot.app.discord.command.LeaderboardCommandEntry;
 import dev.gnomebot.app.server.AppRequest;
@@ -37,6 +38,37 @@ import java.util.stream.Collectors;
 public class ActivityHandlers {
 	public static final long MS_IN_DAY = 86400000L;
 
+	public static List<LeaderboardEntry> data(GuildCollections gc, long time, long channel) {
+		List<LeaderboardEntry> leaderboardEntries = new ArrayList<>();
+		List<Bson> agg = new ArrayList<>();
+		List<Bson> filter = new ArrayList<>();
+
+		if (channel != 0L) {
+			filter.add(Filters.eq("channel", channel));
+		}
+
+		if (time > 0L) {
+			filter.add(Filters.gt("date", new Date(System.currentTimeMillis() - time)));
+		}
+
+		if (filter.size() == 1) {
+			agg.add(Aggregates.match(filter.getFirst()));
+		} else if (!filter.isEmpty()) {
+			agg.add(Aggregates.match(Filters.and(filter)));
+		}
+
+		agg.add(Aggregates.group("$user", Accumulators.sum("xp", "$xp")));
+
+		for (var document : gc.messageXp.aggregate(agg)) {
+			var entry = new LeaderboardEntry(document.getLong("_id"));
+			entry.value = ((Number) document.get("xp")).longValue();
+			leaderboardEntries.add(entry);
+		}
+
+		leaderboardEntries.sort(null);
+		return leaderboardEntries;
+	}
+
 	public static HTTPResponse leaderboard(AppRequest req) throws Exception {
 		req.checkMember();
 
@@ -50,42 +82,15 @@ public class ActivityHandlers {
 		var channel = SnowFlake.num(req.query("channel").asString());
 		var role = SnowFlake.convert(req.query("role").asString());
 
-		var memberMap = req.gc.getGuild().getMembers().filter(member -> !member.isBot()).toStream().collect(Collectors.toMap(u -> u.getId().asLong(), member -> member));
-		List<LeaderboardEntry> leaderboardEntries = new ArrayList<>();
-		List<Bson> agg = new ArrayList<>();
-		List<Bson> filter = new ArrayList<>();
-
-		if (channel != 0L) {
-			filter.add(Filters.eq("channel", channel));
-		}
-
-		if (time > 0L) {
-			filter.add(Filters.gt("date", new Date(System.currentTimeMillis() - time)));
-		}
-
-		if (filter.size() == 1) {
-			agg.add(Aggregates.match(filter.getFirst()));
-		} else if (!filter.isEmpty()) {
-			agg.add(Aggregates.match(Filters.and(filter)));
-		}
-
-		agg.add(Aggregates.group("$user", Accumulators.sum("xp", "$xp")));
-
-		for (var document : req.gc.messageXp.aggregate(agg)) {
-			var entry = new LeaderboardEntry(document.getLong("_id"));
-			entry.value = ((Number) document.get("xp")).longValue();
-			leaderboardEntries.add(entry);
-		}
-
-		leaderboardEntries.sort(null);
-
+		var memberMap = req.gc.getMembers();
+		var leaderboardEntries = data(req.gc, time, channel);
 		var array = JSONArray.of();
 
 		for (var entry : leaderboardEntries) {
 			try {
 				var member = memberMap.get(entry.id);
 
-				if (member == null || role.asLong() != 0L && !member.getRoleIds().contains(role)) {
+				if (member == null || member.isBot() || role.asLong() != 0L && !member.getRoleIds().contains(role)) {
 					continue;
 				}
 
@@ -93,7 +98,7 @@ public class ActivityHandlers {
 				o.put("id", member.getId().asString());
 				o.put("name", member.getDisplayName());
 				o.put("xp", entry.value);
-				o.put("rank", array.size());
+				o.put("rank", array.size() + 1);
 				var col = member.getColor().block().getRGB() & 0xFFFFFF;
 				o.put("color", String.format("#%06X", col == 0 ? 0xFFFFFF : col));
 			} catch (Exception ignore) {
@@ -107,55 +112,18 @@ public class ActivityHandlers {
 		return JSONResponse.of(array).publicCache(Duration.ofMinutes(30L));
 	}
 
-	public static HTTPResponse leaderboardImage(AppRequest req) throws Exception {
-		req.checkMember();
-
-		var time = req.variable("days").asInt() * MS_IN_DAY;
-
-		if (time < 0L) {
-			throw new BadRequestError("Invalid timespan!");
-		}
-
-		var limit = req.query("limit").asInt(20);
-		var channel = SnowFlake.num(req.query("channel").asString());
-		var role = SnowFlake.convert(req.query("role").asString());
-
-		var memberMap = req.gc.getGuild().getMembers().filter(member -> !member.isBot()).toStream().collect(Collectors.toMap(u -> u.getId().asLong(), member -> member));
-		List<LeaderboardEntry> leaderboardEntries = new ArrayList<>();
-		List<Bson> agg = new ArrayList<>();
-		List<Bson> filter = new ArrayList<>();
-
-		if (channel != 0L) {
-			filter.add(Filters.eq("channel", channel));
-		}
-
-		if (time > 0L) {
-			filter.add(Filters.gt("date", new Date(System.currentTimeMillis() - time)));
-		}
-
-		if (filter.size() == 1) {
-			agg.add(Aggregates.match(filter.getFirst()));
-		} else if (!filter.isEmpty()) {
-			agg.add(Aggregates.match(Filters.and(filter)));
-		}
-
-		agg.add(Aggregates.group("$user", Accumulators.sum("xp", "$xp")));
-
-		for (var document : req.gc.messageXp.aggregate(agg)) {
-			var entry = new LeaderboardEntry(document.getLong("_id"));
-			entry.value = ((Number) document.get("xp")).longValue();
-			leaderboardEntries.add(entry);
-		}
-
-		leaderboardEntries.sort(null);
+	public static BufferedImage image(GuildCollections gc, long time, long channel, long role, int limit) throws Exception {
+		var memberMap = gc.getMembers();
+		var leaderboardEntries = data(gc, time, channel);
 
 		var list = new ArrayList<LeaderboardCommandEntry>(limit);
+		var roleSf = SnowFlake.convert(role);
 
 		for (var entry : leaderboardEntries) {
 			try {
 				var member = memberMap.get(entry.id);
 
-				if (member == null || role.asLong() != 0L && !member.getRoleIds().contains(role)) {
+				if (member == null || member.isBot() || role != 0L && !member.getRoleIds().contains(roleSf)) {
 					continue;
 				}
 
@@ -187,7 +155,7 @@ public class ActivityHandlers {
 			final var index = i;
 			var thread = new Thread(() -> {
 				try {
-					avatars[index] = InfoHandlers.getUserAvatarImage(req.app, list.get(index).id, 42);
+					avatars[index] = InfoHandlers.getUserAvatarImage(gc.db.app, list.get(index).id, 42);
 				} catch (Exception ex) {
 					avatars[index] = new BufferedImage(42, 42, BufferedImage.TYPE_INT_RGB);
 					Log.error(ex.toString());
@@ -205,7 +173,7 @@ public class ActivityHandlers {
 		}
 
 		var canvas = new ImageCanvas();
-		canvas.setFont(req.gc.font.create(36));
+		canvas.setFont(gc.font.create(36));
 
 		var w = 0;
 
@@ -260,7 +228,24 @@ public class ActivityHandlers {
 			canvas.addImage(100, 3 + i * 45, 42, 42, avatars[i]);
 		}
 
-		return HTTPResponse.ok().png(canvas.createImage()).publicCache(Duration.ofMinutes(30L));
+		return canvas.createImage();
+	}
+
+	public static HTTPResponse leaderboardImage(AppRequest req) throws Exception {
+		req.checkMember();
+
+		var time = req.variable("days").asInt() * MS_IN_DAY;
+
+		if (time < 0L) {
+			throw new BadRequestError("Invalid timespan!");
+		}
+
+		var limit = req.query("limit").asInt(20);
+		var channel = SnowFlake.num(req.query("channel").asString());
+		var role = SnowFlake.num(req.query("role").asString());
+
+		var image = image(req.gc, time, channel, role, limit);
+		return HTTPResponse.ok().png(image).publicCache(Duration.ofMinutes(30L));
 	}
 
 	public static HTTPResponse rank(AppRequest req) throws Exception {
@@ -357,15 +342,15 @@ public class ActivityHandlers {
 
 		try {
 			req.gc.channels().list
-					.stream()
-					.filter(c -> c.canViewChannel(req.token.userId))
-					.sorted((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()))
-					.forEach(c -> {
-						var mi = new MessageInfo();
-						mi.id = c.id;
-						mi.name = c.getName();
-						channels.put(c.id, mi);
-					});
+				.stream()
+				.filter(c -> c.canViewChannel(req.token.userId))
+				.sorted((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()))
+				.forEach(c -> {
+					var mi = new MessageInfo();
+					mi.id = c.id;
+					mi.name = c.getName();
+					channels.put(c.id, mi);
+				});
 		} catch (Exception ex) {
 			throw new NotFoundError("Channel not found!");
 		}
@@ -405,10 +390,10 @@ public class ActivityHandlers {
 		}
 
 		var channelList = channels.values()
-				.stream()
-				.filter(messageInfo -> messageInfo.totalMessages > 0)
-				.sorted((o1, o2) -> Integer.compare(o2.totalMessages, o1.totalMessages))
-				.toList();
+			.stream()
+			.filter(messageInfo -> messageInfo.totalMessages > 0)
+			.sorted((o1, o2) -> Integer.compare(o2.totalMessages, o1.totalMessages))
+			.toList();
 
 		for (var i = 0; i < channelList.size(); i++) {
 			channelList.get(i).index = i;
@@ -472,8 +457,8 @@ public class ActivityHandlers {
 
 		try {
 			var channelList = req.gc.getGuild().getMembers()
-					.toStream()
-					.sorted((o1, o2) -> o1.getUsername().compareToIgnoreCase(o2.getUsername())).toList();
+				.toStream()
+				.sorted((o1, o2) -> o1.getUsername().compareToIgnoreCase(o2.getUsername())).toList();
 
 			for (var m : channelList) {
 				var mi = new MessageInfo();
@@ -517,10 +502,10 @@ public class ActivityHandlers {
 		}
 
 		var memberList = members.values()
-				.stream()
-				.filter(messageInfo -> messageInfo.totalMessages >= 10)
-				.sorted((o1, o2) -> Integer.compare(o2.totalMessages, o1.totalMessages))
-				.collect(Collectors.toList());
+			.stream()
+			.filter(messageInfo -> messageInfo.totalMessages >= 10)
+			.sorted((o1, o2) -> Integer.compare(o2.totalMessages, o1.totalMessages))
+			.collect(Collectors.toList());
 
 		for (var i = 0; i < memberList.size(); i++) {
 			memberList.get(i).index = i;
@@ -748,10 +733,10 @@ public class ActivityHandlers {
 		var map = new HashMap<Long, MutableInt>();
 
 		for (var msg : req.gc.messages.query()
-				.filter(Filters.bitsAllSet("flags", DiscordMessage.FLAG_MENTIONS_ROLES))
-				.filter(Filters.bitsAllClear("flags", DiscordMessage.FLAG_BOT))
-				.filter(Filters.eq("role_mentions", role.id))
-				.projectionFields("channel")
+			.filter(Filters.bitsAllSet("flags", DiscordMessage.FLAG_MENTIONS_ROLES))
+			.filter(Filters.bitsAllClear("flags", DiscordMessage.FLAG_BOT))
+			.filter(Filters.eq("role_mentions", role.id))
+			.projectionFields("channel")
 		) {
 			map.computeIfAbsent(msg.getChannelID(), MutableInt.MAP_VALUE).add(1);
 		}

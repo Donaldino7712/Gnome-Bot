@@ -78,18 +78,18 @@ public abstract class ContentType {
 
 	public static String encodeMentions(String content) {
 		return content
-				.replaceAll("<@&(\\d+)>", "role:$1")
-				.replaceAll("<@(\\d+)>", "user:$1")
-				.replace("@here", "mention:here")
-				.replace("@everyone", "mention:everyone");
+			.replaceAll("<@&(\\d+)>", "role:$1")
+			.replaceAll("<@(\\d+)>", "user:$1")
+			.replace("@here", "mention:here")
+			.replace("@everyone", "mention:everyone");
 	}
 
 	public static String decodeMentions(String content) {
 		return content
-				.replaceAll("role:(\\d+)", "<@&$1>")
-				.replaceAll("user:(\\d+)", "<@$1>")
-				.replace("mention:here", "@here")
-				.replace("mention:everyone", "@everyone");
+			.replaceAll("role:(\\d+)", "<@&$1>")
+			.replaceAll("user:(\\d+)", "<@$1>")
+			.replace("mention:here", "@here")
+			.replace("mention:everyone", "@everyone");
 	}
 
 	public static Pair<ContentType, Object> parse(GuildCollections gc, String content) {

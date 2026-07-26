@@ -4,6 +4,7 @@ import dev.gnomebot.app.AppPaths;
 import dev.gnomebot.app.data.Currency;
 import dev.gnomebot.app.discord.DiscordHandler;
 import dev.gnomebot.app.discord.command.admin.GnomeAdminCommand;
+import dev.gnomebot.app.discord.command.admin.KickCommand;
 import dev.gnomebot.app.discord.legacycommand.GnomeException;
 import dev.gnomebot.app.util.UUIDWrapper;
 import dev.latvian.apps.ansi.log.Log;
@@ -60,6 +61,7 @@ public class ApplicationCommands {
 		add(QuoteCommands.MESSAGE_INTERACTION);
 		add(ReportCommand.MESSAGE_INTERACTION);
 		add(GnomeMessageInteraction.MESSAGE_INTERACTION);
+		add(KickCommand.MESSAGE_INTERACTION);
 
 		add(ReportCommand.USER_INTERACTION);
 		add(GnomeMemberInteraction.USER_INTERACTION);
@@ -136,9 +138,9 @@ public class ApplicationCommands {
 		Log.warn("Bulk updating all commands...");
 
 		handler.client.getRestClient()
-				.getApplicationService()
-				.bulkOverwriteGlobalApplicationCommand(handler.selfId, list)
-				.blockFirst()
+			.getApplicationService()
+			.bulkOverwriteGlobalApplicationCommand(handler.selfId, list)
+			.blockFirst()
 		;
 
 		Log.success("Bulk updated " + list.size() + " application commands!");
@@ -173,11 +175,11 @@ public class ApplicationCommands {
 		}
 
 		var globalCommands = handler.client.getRestClient()
-				.getApplicationService()
-				.getGlobalApplicationCommands(handler.selfId)
-				.toStream()
-				.filter(ApplicationCommandKey::validData)
-				.collect(Collectors.toMap(ApplicationCommandKey::new, data -> data.id().asLong()));
+			.getApplicationService()
+			.getGlobalApplicationCommands(handler.selfId)
+			.toStream()
+			.filter(ApplicationCommandKey::validData)
+			.collect(Collectors.toMap(ApplicationCommandKey::new, data -> data.id().asLong()));
 
 		var changed = 0;
 
@@ -189,9 +191,9 @@ public class ApplicationCommands {
 					Log.warn("Deleting " + entry.getKey() + "/" + id);
 
 					handler.client.getRestClient()
-							.getApplicationService()
-							.deleteGlobalApplicationCommand(handler.selfId, id)
-							.block()
+						.getApplicationService()
+						.deleteGlobalApplicationCommand(handler.selfId, id)
+						.block()
 					;
 				} else {
 					Log.warn("Deleting " + entry.getKey() + "/unknown");
@@ -212,9 +214,9 @@ public class ApplicationCommands {
 				}
 
 				handler.client.getRestClient()
-						.getApplicationService()
-						.createGlobalApplicationCommand(handler.selfId, entry.getValue().createRootRequest())
-						.block()
+					.getApplicationService()
+					.createGlobalApplicationCommand(handler.selfId, entry.getValue().createRootRequest())
+					.block()
 				;
 
 				changed++;

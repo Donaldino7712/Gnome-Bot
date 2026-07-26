@@ -18,8 +18,8 @@ public class FontConfigType implements ConfigType<Font, FontConfigType.Holder> {
 	private static final Pattern STLYE_PATTERN = Pattern.compile("^([!/]+\\s+)?(.*)$");
 
 	public static final Map<String, Font> ALL_FONTS = Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts())
-			.sorted((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()))
-			.collect(Collectors.toMap(Font::getName, Function.identity(), (font, font2) -> font, LinkedHashMap::new));
+		.sorted((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()))
+		.collect(Collectors.toMap(Font::getName, Function.identity(), (font, font2) -> font, LinkedHashMap::new));
 
 	private static Font defaultFont = ALL_FONTS.get("DejaVu Serif");
 
@@ -37,7 +37,8 @@ public class FontConfigType implements ConfigType<Font, FontConfigType.Holder> {
 		}
 
 		public Font create(float size) {
-			return get().deriveFont(size);
+			var g = get();
+			return g == null ? defaultFont.deriveFont(size) : g.deriveFont(size);
 		}
 	}
 
@@ -111,7 +112,7 @@ public class FontConfigType implements ConfigType<Font, FontConfigType.Holder> {
 
 	@Override
 	public String serialize(GuildCollections guild, int type, Font value) {
-	    return value != null ? write(value) : "";
+		return value != null ? write(value) : "";
 	}
 
 	@Override

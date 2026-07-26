@@ -20,66 +20,66 @@ import java.util.stream.Collectors;
 public class MacroCommands extends ApplicationCommands {
 	public static final String COMPLEX_PLACEHOLDER = "For info about Complex Messages run /about macro";
 	public static final String HELP = """
-			Extras allow you to add buttons to your macro, change it into script or embed, etc. List of available properties:
-			
-			`clear`
-			Remove all extras when editing
-			
-			`hidden`
-			/macro list will not show this macro
-			
-			`embed ["title"] [#RRGGBB]`
-			Changes macro into embed with optional title
-			
-			`embed_field <"name"> <"value">`
-			Changes macro into embed with optional title
-			
-			`inline_embed_field <"title"> <"value">`
-			Changes macro into embed with optional title
-			
-			`script <js>`
-			Instead of printing text, it runs Text as script instead (WIP!)
-			
-			`url <"name"> <"url">`
-			Adds a URL button
-			
-			`macro <"name"> <macro> [gray|blurple|green|red] [emoji]`
-			Adds a macro button (creates new ephemeral message)
-			
-			`edit_macro <"name"> <macro> [gray|blurple|green|red] [emoji]`
-			Adds a macro button (edits original message)
-			
-			`newrow`
-			Adds new component row (not required for first row)
-			""";
+		Extras allow you to add buttons to your macro, change it into script or embed, etc. List of available properties:
+		
+		`clear`
+		Remove all extras when editing
+		
+		`hidden`
+		/macro list will not show this macro
+		
+		`embed ["title"] [#RRGGBB]`
+		Changes macro into embed with optional title
+		
+		`embed_field <"name"> <"value">`
+		Changes macro into embed with optional title
+		
+		`inline_embed_field <"title"> <"value">`
+		Changes macro into embed with optional title
+		
+		`script <js>`
+		Instead of printing text, it runs Text as script instead (WIP!)
+		
+		`url <"name"> <"url">`
+		Adds a URL button
+		
+		`macro <"name"> <macro> [gray|blurple|green|red] [emoji]`
+		Adds a macro button (creates new ephemeral message)
+		
+		`edit_macro <"name"> <macro> [gray|blurple|green|red] [emoji]`
+		Adds a macro button (edits original message)
+		
+		`newrow`
+		Adds new component row (not required for first row)
+		""";
 
 	public static final Pattern FORMAT_ESCAPE = Pattern.compile("([*_~@])");
 
 	public static final ChatInputInteractionBuilder COMMAND = chatInputInteraction("macro")
-			.description("Manage macros")
-			.add(sub("add")
-					.add(string("name").required())
-					.run(MacroCommands::add)
-			)
-			.add(sub("edit")
-					.add(string("name").required().suggest(MacroCommands::suggestOwnMacro))
-					.run(MacroCommands::edit)
-			)
-			.add(sub("remove")
-					.add(string("name").required().suggest(MacroCommands::suggestOwnMacro))
-					.run(MacroCommands::remove)
-			)
-			.add(sub("find")
-					.add(user("author"))
-					.add(string("name"))
-					.add(string("content"))
-					.add(bool("include-hidden"))
-					.run(MacroCommands::find)
-			)
-			.add(sub("info")
-					.add(string("name").required().suggest(MacroCommands::suggestAnyMacro))
-					.run(MacroCommands::info)
-			);
+		.description("Manage macros")
+		.add(sub("add")
+			.add(string("name").required())
+			.run(MacroCommands::add)
+		)
+		.add(sub("edit")
+			.add(string("name").required().suggest(MacroCommands::suggestOwnMacro))
+			.run(MacroCommands::edit)
+		)
+		.add(sub("remove")
+			.add(string("name").required().suggest(MacroCommands::suggestOwnMacro))
+			.run(MacroCommands::remove)
+		)
+		.add(sub("find")
+			.add(user("author"))
+			.add(string("name"))
+			.add(string("content"))
+			.add(bool("include-hidden"))
+			.run(MacroCommands::find)
+		)
+		.add(sub("info")
+			.add(string("name").required().suggest(MacroCommands::suggestAnyMacro))
+			.run(MacroCommands::info)
+		);
 
 	private static void suggestAnyMacro(ChatCommandSuggestionEvent event) {
 		for (var macro : event.context.gc.getMacroMap().values()) {
@@ -111,7 +111,7 @@ public class MacroCommands extends ApplicationCommands {
 		}
 
 		event.respondModal("add-macro/" + name, "Adding macro '" + name + "'",
-				TextInput.paragraph("content", "Content")
+			TextInput.paragraph("content", "Content")
 		);
 	}
 
@@ -153,8 +153,8 @@ public class MacroCommands extends ApplicationCommands {
 		var macro = event.context.gc.getMacroFromCommand(event.get("name").asString());
 
 		event.respondModal("edit-macro/" + macro.stringId, "Editing macro '" + macro.name + "'",
-				TextInput.small("rename", "Rename", 1, 50).required(false).prefilled(macro.name),
-				TextInput.paragraph("content", "Content").prefilled(ContentType.encodeMentions(macro.getContent()))
+			TextInput.small("rename", "Rename", 1, 50).required(false).prefilled(macro.name),
+			TextInput.paragraph("content", "Content").prefilled(ContentType.encodeMentions(macro.getContent()))
 		);
 	}
 

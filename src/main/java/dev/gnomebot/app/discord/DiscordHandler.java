@@ -122,28 +122,28 @@ public class DiscordHandler {
 		// DispatchHandlers.addHandler(ThreadMembersUpdate.class, ThreadDispatchHandlers::threadMemberUpdate);
 
 		client = Objects.requireNonNull(DiscordClientBuilder.create(app.config.discord.bot_token)
-				.setDefaultAllowedMentions(AllowedMentions.builder().build())
-				.build()
-				.gateway()
-				.setInitialPresence(shardInfo -> ClientPresence.online(ClientActivity.custom("Watching all of you")))
-				.setEnabledIntents(IntentSet.of(
-						Intent.GUILDS,
-						Intent.GUILD_MEMBERS,
-						Intent.GUILD_MODERATION,
-						Intent.GUILD_EMOJIS_AND_STICKERS,
-						Intent.GUILD_MESSAGES,
-						Intent.GUILD_MESSAGE_REACTIONS,
-						Intent.DIRECT_MESSAGES,
-						Intent.DIRECT_MESSAGE_REACTIONS,
-						Intent.GUILD_PRESENCES,
-						Intent.GUILD_VOICE_STATES,
-						Intent.AUTO_MODERATION_EXECUTION,
-						Intent.MESSAGE_CONTENT
-				))
-				.setMemberRequestFilter(MemberRequestFilter.none())
-				.login()
-				.timeout(Duration.ofMinutes(5L))
-				.block()
+			.setDefaultAllowedMentions(AllowedMentions.builder().build())
+			.build()
+			.gateway()
+			.setInitialPresence(shardInfo -> ClientPresence.online(ClientActivity.custom("Watching all of you")))
+			.setEnabledIntents(IntentSet.of(
+				Intent.GUILDS,
+				Intent.GUILD_MEMBERS,
+				Intent.GUILD_MODERATION,
+				Intent.GUILD_EMOJIS_AND_STICKERS,
+				Intent.GUILD_MESSAGES,
+				Intent.GUILD_MESSAGE_REACTIONS,
+				Intent.DIRECT_MESSAGES,
+				Intent.DIRECT_MESSAGE_REACTIONS,
+				Intent.GUILD_PRESENCES,
+				Intent.GUILD_VOICE_STATES,
+				Intent.AUTO_MODERATION_EXECUTION,
+				Intent.MESSAGE_CONTENT
+			))
+			.setMemberRequestFilter(MemberRequestFilter.none())
+			.login()
+			.timeout(Duration.ofMinutes(5L))
+			.block()
 		);
 
 		selfId = client.getSelfId().asLong();
@@ -543,10 +543,10 @@ public class DiscordHandler {
 					messageChannel.accept(MessageBuilder.create(msg));
 
 					gc.auditLog(GnomeAuditLogEntry.builder(GnomeAuditLogEntry.Type.KICK)
-							.user(user)
-							.source(selfId)
-							.content("AutoMod: " + reason)
-							.flags(GnomeAuditLogEntry.Flags.DM, dm)
+						.user(user)
+						.source(selfId)
+						.content("AutoMod: " + reason)
+						.flags(GnomeAuditLogEntry.Flags.DM, dm)
 					);
 				}
 				case "warn" -> {

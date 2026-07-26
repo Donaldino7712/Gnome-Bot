@@ -220,9 +220,9 @@ public class GuildAPIHandlers {
 		req.checkMember();
 
 		var list = req.gc.feedback.query()
-				.toStream()
-				.sorted((o1, o2) -> Integer.compare(o2.number(), o1.number()))
-				.toList();
+			.toStream()
+			.sorted((o1, o2) -> Integer.compare(o2.number(), o1.number()))
+			.toList();
 
 		var memberCache = req.gc.createMemberCache();
 
@@ -408,9 +408,9 @@ public class GuildAPIHandlers {
 		}
 
 		return HTTPResponse.ok().text(list.stream()
-				.sorted(ExportedMessage.COMPARATOR)
-				.map(ExportedMessage::toString)
-				.collect(Collectors.joining("\n"))
+			.sorted(ExportedMessage.COMPARATOR)
+			.map(ExportedMessage::toString)
+			.collect(Collectors.joining("\n"))
 		);
 	}
 }

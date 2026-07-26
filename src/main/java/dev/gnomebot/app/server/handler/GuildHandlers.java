@@ -82,8 +82,8 @@ public class GuildHandlers {
 		var macros = req.gc.getMacroMap().values().stream().filter(m -> author == 0L || m.author == author).sorted().toList();
 
 		var guildCommands = req.gc.db.app.discordHandler.client.getRestClient().getApplicationService().getGuildApplicationCommands(req.gc.db.app.discordHandler.selfId, req.gc.guildId)
-				.toStream()
-				.collect(Collectors.toMap(d -> d.id().asLong(), Function.identity()));
+			.toStream()
+			.collect(Collectors.toMap(d -> d.id().asLong(), Function.identity()));
 
 		for (var macro : macros) {
 			if (macro.slashCommand != 0L) {
@@ -303,9 +303,9 @@ public class GuildHandlers {
 		req.checkMember();
 
 		var list = req.gc.feedback.query()
-				.toStream()
-				.sorted((o1, o2) -> Integer.compare(o2.number(), o1.number()))
-				.toList();
+			.toStream()
+			.sorted((o1, o2) -> Integer.compare(o2.number(), o1.number()))
+			.toList();
 
 		var memberCache = req.gc.createMemberCache();
 

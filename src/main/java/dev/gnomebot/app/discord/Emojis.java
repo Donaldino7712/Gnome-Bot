@@ -46,29 +46,29 @@ public interface Emojis {
 	Emoji PASTE = custom(1330932829370056788L, "Paste", false);
 
 	Emoji[] NUMBERS = {
-			Emoji.unicode("1️⃣"),
-			Emoji.unicode("2️⃣"),
-			Emoji.unicode("3️⃣"),
-			Emoji.unicode("4️⃣"),
-			Emoji.unicode("5️⃣"),
-			Emoji.unicode("6️⃣"),
-			Emoji.unicode("7️⃣"),
-			Emoji.unicode("8️⃣"),
-			Emoji.unicode("9️⃣"),
-			Emoji.unicode("\uD83D\uDD1F"),
+		Emoji.unicode("1️⃣"),
+		Emoji.unicode("2️⃣"),
+		Emoji.unicode("3️⃣"),
+		Emoji.unicode("4️⃣"),
+		Emoji.unicode("5️⃣"),
+		Emoji.unicode("6️⃣"),
+		Emoji.unicode("7️⃣"),
+		Emoji.unicode("8️⃣"),
+		Emoji.unicode("9️⃣"),
+		Emoji.unicode("\uD83D\uDD1F"),
 	};
 
 	String[] NUMBER_STRINGS = {
-			":one:",
-			":two:",
-			":three:",
-			":four:",
-			":five:",
-			":six:",
-			":seven:",
-			":eight:",
-			":nine:",
-			":keycap_ten:",
+		":one:",
+		":two:",
+		":three:",
+		":four:",
+		":five:",
+		":six:",
+		":seven:",
+		":eight:",
+		":nine:",
+		":keycap_ten:",
 	};
 
 	static String stripEmojis(String content) {

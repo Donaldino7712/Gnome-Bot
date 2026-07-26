@@ -24,9 +24,9 @@ public class BasicOption {
 	@Override
 	public String toString() {
 		return "BasicOption{" +
-				"name='" + name + '\'' +
-				", value='" + value + '\'' +
-				'}';
+			"name='" + name + '\'' +
+			", value='" + value + '\'' +
+			'}';
 	}
 
 	@Override
@@ -160,10 +160,10 @@ public class BasicOption {
 		}
 
 		s = s.trim().replaceAll("role:(\\d+)", "<@&$1>")
-				.replaceAll("user:(\\d+)", "<@$1>")
-				.replaceAll("channel:(\\d+)", "<#$1>")
-				.replace("mention:here", "@here")
-				.replace("mention:everyone", "@everyone");
+			.replaceAll("user:(\\d+)", "<@$1>")
+			.replaceAll("channel:(\\d+)", "<#$1>")
+			.replace("mention:here", "@here")
+			.replace("mention:everyone", "@everyone");
 
 		return s;
 	}

@@ -54,12 +54,12 @@ public record UserPingConfig(Set<Long> ignoredGuilds, Set<Long> ignoredChannels,
 		}
 
 		return "{" +
-				"ignoredGuilds=" + ignoredGuilds +
-				", ignoredChannels=" + ignoredChannels +
-				", ignoredUsers=" + ignoredUsers +
-				", bots=" + bots +
-				", self=" + self +
-				", silent=" + silent +
-				'}';
+			"ignoredGuilds=" + ignoredGuilds +
+			", ignoredChannels=" + ignoredChannels +
+			", ignoredUsers=" + ignoredUsers +
+			", bots=" + bots +
+			", self=" + self +
+			", silent=" + silent +
+			'}';
 	}
 }

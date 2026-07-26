@@ -7,8 +7,8 @@ import discord4j.core.object.component.TextInput;
 
 public class ModmailCommand extends ApplicationCommands {
 	public static final ChatInputInteractionBuilder COMMAND = chatInputInteraction("modmail")
-			.description("Open a form that will send a message to server owners in a private channel")
-			.run(ModmailCommand::run);
+		.description("Open a form that will send a message to server owners in a private channel")
+		.run(ModmailCommand::run);
 
 	private static void run(ChatInputInteractionEventWrapper event) {
 		if (event.context.gc.adminMessagesChannel.isSet()) {
@@ -24,10 +24,10 @@ public class ModmailCommand extends ApplicationCommands {
 		var message = event.get("message").asString();
 
 		event.context.gc.adminMessagesChannel.messageChannel().flatMap(ChannelInfo::getWebHook).ifPresent(w -> w.execute(MessageBuilder.create()
-				.webhookName("Modmail from " + event.context.sender.getTag())
-				.webhookAvatarUrl(event.context.sender.getAvatarUrl())
-				.allowUserMentions(event.context.sender.getId().asLong())
-				.content(event.context.sender.getMention() + ":\n" + message)
+			.webhookName("Modmail from " + event.context.sender.getTag())
+			.webhookAvatarUrl(event.context.sender.getAvatarUrl())
+			.allowUserMentions(event.context.sender.getId().asLong())
+			.content(event.context.sender.getMention() + ":\n" + message)
 		));
 	}
 }

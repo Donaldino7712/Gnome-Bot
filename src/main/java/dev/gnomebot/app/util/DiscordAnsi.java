@@ -15,14 +15,14 @@ public interface DiscordAnsi {
 	String INVERTED = "\u001B[0;37m";
 
 	String[] COLORS = {
-			BLACK,
-			RED,
-			GREEN,
-			ORANGE,
-			BLUE,
-			MAGENTA,
-			CYAN,
-			INVERTED
+		BLACK,
+		RED,
+		GREEN,
+		ORANGE,
+		BLUE,
+		MAGENTA,
+		CYAN,
+		INVERTED
 	};
 
 	String DARK_CYAN_BG = "\u001B[0;40m";

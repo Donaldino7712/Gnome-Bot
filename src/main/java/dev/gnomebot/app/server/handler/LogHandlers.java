@@ -156,20 +156,20 @@ public class LogHandlers {
 
 		// Required until D4J fixes ban pagination
 		for (var entry : PaginationUtil.paginateAfter(params -> Routes.GUILD_BANS_GET.newRequest(guild.getId().asLong())
-				.query(params)
-				.exchange(guild.getClient().getCoreResources().getRouter())
-				.bodyToMono(BanData[].class)
-				.flatMapMany(Flux::fromArray), data -> data.user().id().asLong(), 0L, 1000).toIterable()) {
+			.query(params)
+			.exchange(guild.getClient().getCoreResources().getRouter())
+			.bodyToMono(BanData[].class)
+			.flatMapMany(Flux::fromArray), data -> data.user().id().asLong(), 0L, 1000).toIterable()) {
 			var u = entry.user();
 			// count++;
 			// App.info("Ban #%05d %s: %s".formatted(count, u.username(), entry.reason().orElse("Unknown")));
 
 			list.add(new BanEntry(
-							u.id().asString(),
-							u.username(),
+					u.id().asString(),
+					u.username(),
 					entry.reason().orElse(""),
 					Utils.getAvatarURL(u)
-					)
+				)
 			);
 		}
 

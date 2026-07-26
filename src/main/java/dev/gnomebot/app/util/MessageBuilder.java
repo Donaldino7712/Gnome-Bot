@@ -382,15 +382,15 @@ public class MessageBuilder {
 	@Override
 	public String toString() {
 		return "MessageBuilder{" +
-				"content='" + content + '\'' +
-				", ephemeral=" + ephemeral +
-				", embeds=" + Optional.ofNullable(embeds).map(e -> e.stream().map(EmbedBuilder::toEmbedData).toList()).orElse(null) +
-				", allowedMentions=" + Optional.ofNullable(allowedMentions).map(AllowedMentions::toData).orElse(null) +
-				", components=" + components.stream().map(LayoutComponent::getData).toList() +
-				", files=" + files +
-				", messageReference=" + messageReference +
-				", webhookName='" + webhookName + '\'' +
-				", webhookAvatarUrl='" + webhookAvatarUrl + '\'' +
-				'}';
+			"content='" + content + '\'' +
+			", ephemeral=" + ephemeral +
+			", embeds=" + Optional.ofNullable(embeds).map(e -> e.stream().map(EmbedBuilder::toEmbedData).toList()).orElse(null) +
+			", allowedMentions=" + Optional.ofNullable(allowedMentions).map(AllowedMentions::toData).orElse(null) +
+			", components=" + components.stream().map(LayoutComponent::getData).toList() +
+			", files=" + files +
+			", messageReference=" + messageReference +
+			", webhookName='" + webhookName + '\'' +
+			", webhookAvatarUrl='" + webhookAvatarUrl + '\'' +
+			'}';
 	}
 }

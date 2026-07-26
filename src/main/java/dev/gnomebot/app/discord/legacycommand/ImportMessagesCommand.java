@@ -62,10 +62,10 @@ public class ImportMessagesCommand {
 
 				try {
 					for (var message : ch.getMessagesBefore(lastId)
-							.delayElements(Duration.ofMillis(10))
-							.onErrorContinue((throwable, o) -> Log.error("Error! " + o + ": " + throwable))
-							.filter(m -> m.getType() == Message.Type.DEFAULT && m.getAuthor().isPresent())
-							.toIterable()) {
+						.delayElements(Duration.ofMillis(10))
+						.onErrorContinue((throwable, o) -> Log.error("Error! " + o + ": " + throwable))
+						.filter(m -> m.getType() == Message.Type.DEFAULT && m.getAuthor().isPresent())
+						.toIterable()) {
 						mId++;
 						lastId = message.getId().asLong();
 						var user = message.getAuthor().get();

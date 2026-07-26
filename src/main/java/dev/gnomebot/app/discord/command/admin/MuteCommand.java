@@ -80,10 +80,10 @@ public class MuteCommand extends ApplicationCommands {
 		});
 
 		event.context.gc.auditLog(GnomeAuditLogEntry.builder(GnomeAuditLogEntry.Type.MUTE)
-				.user(user)
-				.source(event.context.sender)
-				.content(reason)
-				.flags(GnomeAuditLogEntry.Flags.DM, dm)
+			.user(user)
+			.source(event.context.sender)
+			.content(reason)
+			.flags(GnomeAuditLogEntry.Flags.DM, dm)
 		);
 
 		// m.addReaction(DiscordHandler.EMOJI_COMMAND_ERROR).block();
@@ -140,10 +140,10 @@ public class MuteCommand extends ApplicationCommands {
 			}
 		} else {
 			adminButtons.add(ActionRow.of(SelectMenu.of(FormattingUtils.trim("punish/" + m.getId().asString() + "/" + ComponentEventWrapper.encode(reason), 100),
-					SelectMenu.Option.of("Ban", "ban").withEmoji(Emojis.NO_ENTRY),
-					SelectMenu.Option.of("Kick", "kick").withEmoji(Emojis.BOOT),
-					// SelectMenu.Option.of("Warn", "warn").withEmoji(Emojis.WARNING),
-					SelectMenu.Option.of("Unmute", "unmute").withEmoji(Emojis.YES)
+				SelectMenu.Option.of("Ban", "ban").withEmoji(Emojis.NO_ENTRY),
+				SelectMenu.Option.of("Kick", "kick").withEmoji(Emojis.BOOT),
+				// SelectMenu.Option.of("Warn", "warn").withEmoji(Emojis.WARNING),
+				SelectMenu.Option.of("Unmute", "unmute").withEmoji(Emojis.YES)
 			).withPlaceholder("Select Action").withMinValues(0).withMaxValues(1)));
 
 			if (contextMessage != null) {
@@ -187,15 +187,15 @@ public class MuteCommand extends ApplicationCommands {
 		}
 
 		var dm = DM.send(context.handler, m.getUserData(), MessageBuilder.create()
-						.addEmbed(embed)
-						.components(dmButtons.isEmpty() ? null : Collections.singletonList(ActionRow.of(dmButtons)))
-				, true).isPresent();
+				.addEmbed(embed)
+				.components(dmButtons.isEmpty() ? null : Collections.singletonList(ActionRow.of(dmButtons)))
+			, true).isPresent();
 
 		context.gc.auditLog(GnomeAuditLogEntry.builder(GnomeAuditLogEntry.Type.MUTE)
-				.user(m)
-				.source(context.handler.selfId)
-				.content(reason)
-				.flags(GnomeAuditLogEntry.Flags.DM, dm)
+			.user(m)
+			.source(context.handler.selfId)
+			.content(reason)
+			.flags(GnomeAuditLogEntry.Flags.DM, dm)
 		);
 	}
 }

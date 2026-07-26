@@ -127,13 +127,13 @@ public class DisplayCommands extends ApplicationCommands {
 		event.acknowledgeEphemeral();
 		var total = event.context.gc.getGuild().getMembers().count().block().intValue();
 		event.context.gc.getGuild()
-				.getMembers()
-				.filter(m -> {
-					var dm = event.context.gc.members.findFirst(m);
-					return dm != null && dm.totalMessages() <= 0;
-				})
-				.count()
-				.subscribe(count -> event.respond(count + " / " + total + " quiet people [" + (int) (count * 100D / (double) total) + "%]"));
+			.getMembers()
+			.filter(m -> {
+				var dm = event.context.gc.members.findFirst(m);
+				return dm != null && dm.totalMessages() <= 0;
+			})
+			.count()
+			.subscribe(count -> event.respond(count + " / " + total + " quiet people [" + (int) (count * 100D / (double) total) + "%]"));
 	}
 
 	public static void messageHistoryExport(ChatInputInteractionEventWrapper event) {
@@ -284,19 +284,19 @@ public class DisplayCommands extends ApplicationCommands {
 		if (role.isPresent()) {
 			var wr = role.get();
 			long count = event.context.gc.getGuild()
-					.getMembers()
-					.filter(member -> member.getRoleIds().contains(SnowFlake.convert(wr.id)))
-					.count()
-					.block();
+				.getMembers()
+				.filter(member -> member.getRoleIds().contains(SnowFlake.convert(wr.id)))
+				.count()
+				.block();
 
 			event.respond(FormattingUtils.format(count) + " members with role " + wr);
 		} else {
 			var max = event.context.gc.getGuild().getMaxMembers().orElse(0);
 
 			long count = event.context.gc.getGuild()
-					.getMembers()
-					.count()
-					.block();
+				.getMembers()
+				.count()
+				.block();
 
 			event.respond(FormattingUtils.format(count) + " / " + (max == 0 ? "?" : FormattingUtils.format(max)) + " members");
 		}

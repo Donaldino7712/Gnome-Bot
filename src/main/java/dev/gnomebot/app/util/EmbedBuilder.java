@@ -329,20 +329,20 @@ public class EmbedBuilder {
 	@Override
 	public String toString() {
 		return "EmbedBuilder{" +
-				"title='" + title + '\'' +
-				", description='" + description + '\'' +
-				", url='" + url + '\'' +
-				", timestamp=" + timestamp +
-				", defaultColor=" + defaultColor +
-				", color=" + color +
-				", footerText='" + footerText + '\'' +
-				", footerIconUrl='" + footerIconUrl + '\'' +
-				", image='" + image + '\'' +
-				", thumbnail='" + thumbnail + '\'' +
-				", authorName='" + authorName + '\'' +
-				", authorUrl='" + authorUrl + '\'' +
-				", authorIconUrl='" + authorIconUrl + '\'' +
-				", fields=" + fields.stream().map(EmbedCreateFields.Field::asRequest).toList() +
-				'}';
+			"title='" + title + '\'' +
+			", description='" + description + '\'' +
+			", url='" + url + '\'' +
+			", timestamp=" + timestamp +
+			", defaultColor=" + defaultColor +
+			", color=" + color +
+			", footerText='" + footerText + '\'' +
+			", footerIconUrl='" + footerIconUrl + '\'' +
+			", image='" + image + '\'' +
+			", thumbnail='" + thumbnail + '\'' +
+			", authorName='" + authorName + '\'' +
+			", authorUrl='" + authorUrl + '\'' +
+			", authorIconUrl='" + authorIconUrl + '\'' +
+			", fields=" + fields.stream().map(EmbedCreateFields.Field::asRequest).toList() +
+			'}';
 	}
 }

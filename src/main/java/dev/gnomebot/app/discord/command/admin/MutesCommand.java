@@ -38,7 +38,7 @@ public class MutesCommand extends ApplicationCommands {
 		var muteRoleId = event.context.gc.mutedRole.get();
 
 		if (muteRoleId != 0L) {
-			event.context.gc.getMemberStream().filter(m -> m.getRoleIds().contains(SnowFlake.convert(muteRoleId))).forEach(m -> {
+			event.context.gc.getMembers().values().stream().filter(m -> m.getRoleIds().contains(SnowFlake.convert(muteRoleId))).forEach(m -> {
 				if (!set.contains(m.getId().asLong())) {
 					list.add(i.addAndGet(1) + ". <@" + m.getId().asString() + "> - Doesn't Expire");
 				}
