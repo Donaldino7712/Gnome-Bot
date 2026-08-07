@@ -5,10 +5,9 @@ import dev.latvian.apps.webutils.FormattingUtils;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.component.ActionComponent;
 import discord4j.core.object.component.ActionRow;
-import discord4j.core.object.component.LayoutComponent;
-import discord4j.core.object.component.MessageComponent;
 import discord4j.core.object.component.SelectMenu;
 import discord4j.core.object.component.TextInput;
+import discord4j.core.object.component.TopLevelMessageComponent;
 import discord4j.core.spec.InteractionApplicationCommandCallbackSpec;
 import discord4j.core.spec.MessageCreateFields;
 import discord4j.core.spec.MessageCreateSpec;
@@ -81,7 +80,7 @@ public class MessageBuilder {
 	public Boolean ephemeral;
 	public List<EmbedBuilder> embeds;
 	public AllowedMentions allowedMentions;
-	public List<LayoutComponent> components;
+	public List<TopLevelMessageComponent> components;
 	public List<MessageCreateFields.File> files;
 	public long messageReference;
 	public String webhookName;
@@ -149,7 +148,7 @@ public class MessageBuilder {
 		return allowedMentions(AllowedMentions.builder().allowRole(Arrays.stream(ids).mapToObj(SnowFlake::convert).toArray(Snowflake[]::new)).build());
 	}
 
-	public MessageBuilder components(List<LayoutComponent> components) {
+	public MessageBuilder components(List<TopLevelMessageComponent> components) {
 		this.components = components;
 		return this;
 	}
@@ -158,7 +157,7 @@ public class MessageBuilder {
 		return components(List.of());
 	}
 
-	public MessageBuilder addComponent(LayoutComponent component) {
+	public MessageBuilder addComponent(TopLevelMessageComponent component) {
 		if (this.components == null) {
 			this.components = new ArrayList<>();
 		}
@@ -192,17 +191,21 @@ public class MessageBuilder {
 		return this;
 	}
 
-	public MessageBuilder addFile(String name, InputStream file) {
+	public MessageBuilder addFile(MessageCreateFields.File file) {
 		if (this.files == null) {
 			this.files = new ArrayList<>();
 		}
 
-		this.files.add(MessageCreateFields.File.of(name, file));
+		this.files.add(file);
 		return this;
 	}
 
+	public MessageBuilder addFile(String name, InputStream file) {
+		return addFile(MessageCreateFields.File.of(name, file));
+	}
+
 	public MessageBuilder addFile(String name, byte[] fileBytes) {
-		return addFile(name, new ByteArrayInputStream(fileBytes));
+		return addFile(MessageCreateFields.File.of(name, new ByteArrayInputStream(fileBytes)));
 	}
 
 	public MessageBuilder noFiles() {
@@ -300,7 +303,7 @@ public class MessageBuilder {
 			if (this.components.isEmpty()) {
 				builder.components();
 			} else {
-				builder.components(this.components.stream().map(MessageComponent::getData).toList());
+				builder.components(this.components.stream().map(TopLevelMessageComponent::getData).toList());
 			}
 		}
 
@@ -337,7 +340,7 @@ public class MessageBuilder {
 			if (this.components.isEmpty()) {
 				builder.components();
 			} else {
-				builder.components(Possible.of(this.components.stream().map(LayoutComponent::getData).toList()));
+				builder.components(Possible.of(this.components.stream().map(TopLevelMessageComponent::getData).toList()));
 			}
 		}
 
@@ -386,7 +389,7 @@ public class MessageBuilder {
 			", ephemeral=" + ephemeral +
 			", embeds=" + Optional.ofNullable(embeds).map(e -> e.stream().map(EmbedBuilder::toEmbedData).toList()).orElse(null) +
 			", allowedMentions=" + Optional.ofNullable(allowedMentions).map(AllowedMentions::toData).orElse(null) +
-			", components=" + components.stream().map(LayoutComponent::getData).toList() +
+			", components=" + components.stream().map(TopLevelMessageComponent::getData).toList() +
 			", files=" + files +
 			", messageReference=" + messageReference +
 			", webhookName='" + webhookName + '\'' +

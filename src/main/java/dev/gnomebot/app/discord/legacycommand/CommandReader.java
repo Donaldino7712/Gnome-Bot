@@ -16,9 +16,9 @@ import java.util.regex.Pattern;
 public class CommandReader extends SimpleStringReader {
 	private final GuildCollections gc;
 
-	public CommandReader(GuildCollections g, String s) {
+	public CommandReader(GuildCollections gc, String s) {
 		super(s);
-		gc = g;
+		this.gc = gc;
 	}
 
 	public Optional<User> readUser() {

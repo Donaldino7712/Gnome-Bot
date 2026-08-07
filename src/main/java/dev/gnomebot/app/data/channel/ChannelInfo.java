@@ -10,9 +10,11 @@ import discord4j.core.object.entity.channel.CategorizableChannel;
 import discord4j.core.retriever.EntityRetrievalStrategy;
 import discord4j.discordjson.Id;
 import discord4j.discordjson.json.ChannelData;
+import discord4j.discordjson.json.MessageCreateRequest;
 import discord4j.discordjson.json.MessageData;
 import discord4j.discordjson.possible.Possible;
 import discord4j.rest.entity.RestChannel;
+import discord4j.rest.util.MultipartRequest;
 import discord4j.rest.util.PaginationUtil;
 import discord4j.rest.util.Permission;
 import org.jetbrains.annotations.Nullable;
@@ -108,8 +110,12 @@ public abstract class ChannelInfo {
 		return Possible.flatOpt(getChannelData().lastMessageId()).map(Id::asLong).orElse(0L);
 	}
 
+	public Mono<Message> createMessage(MultipartRequest<MessageCreateRequest> request) {
+		return Mono.defer(() -> getRest().createMessage(request)).map(data -> new Message(gc.getClient(), data));
+	}
+
 	public Mono<Message> createMessage(MessageBuilder builder) {
-		return Mono.defer(() -> getRest().createMessage(builder.toMultipartMessageCreateRequest())).map(data -> new Message(gc.getClient(), data));
+		return createMessage(builder.toMultipartMessageCreateRequest());
 	}
 
 	public Mono<Message> createMessage(String content) {

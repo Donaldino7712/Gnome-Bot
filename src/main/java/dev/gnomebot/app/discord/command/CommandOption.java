@@ -4,7 +4,6 @@ import dev.gnomebot.app.data.channel.ChannelInfo;
 import dev.gnomebot.app.discord.CachedRole;
 import dev.gnomebot.app.discord.WebHookDestination;
 import dev.gnomebot.app.discord.legacycommand.CommandContext;
-import dev.gnomebot.app.discord.legacycommand.CommandReader;
 import dev.gnomebot.app.discord.legacycommand.GnomeException;
 import dev.gnomebot.app.util.BasicOption;
 import discord4j.core.object.command.ApplicationCommandInteractionOption;
@@ -39,11 +38,11 @@ public class CommandOption extends BasicOption {
 	}
 
 	public Optional<User> asUser() {
-		return value.isEmpty() ? Optional.empty() : new CommandReader(context.gc, value).readUser();
+		return value.isEmpty() ? Optional.empty() : context.reader(value).readUser();
 	}
 
 	public Optional<ChannelInfo> asChannelInfo() {
-		return value.isEmpty() ? Optional.empty() : new CommandReader(context.gc, value).readChannelInfo();
+		return value.isEmpty() ? Optional.empty() : context.reader(value).readChannelInfo();
 	}
 
 	public ChannelInfo asChannelInfoOrCurrent() {
@@ -79,7 +78,7 @@ public class CommandOption extends BasicOption {
 	}
 
 	public Optional<CachedRole> asRole() {
-		return value.isEmpty() ? Optional.empty() : new CommandReader(context.gc, value).readRole();
+		return value.isEmpty() ? Optional.empty() : context.reader(value).readRole();
 	}
 
 	public Optional<WebHookDestination> asWebhook() {

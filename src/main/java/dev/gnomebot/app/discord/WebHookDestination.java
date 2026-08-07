@@ -13,7 +13,9 @@ import dev.gnomebot.app.util.Utils;
 import dev.latvian.apps.ansi.log.Log;
 import discord4j.core.object.entity.Webhook;
 import discord4j.discordjson.json.MessageData;
+import discord4j.discordjson.json.WebhookExecuteRequest;
 import discord4j.rest.service.WebhookService;
+import discord4j.rest.util.MultipartRequest;
 import reactor.core.publisher.Mono;
 
 public class WebHookDestination implements PingDestination {
@@ -75,11 +77,10 @@ public class WebHookDestination implements PingDestination {
 		return getWebhookService().executeWebhook(id, token, true, message.toMultipartWebhookExecuteRequest());
 	}
 
-	public long execute(MessageBuilder message) {
+	public long execute(MultipartRequest<? extends WebhookExecuteRequest> request) {
 		var body = "{}";
 
 		try {
-			var request = message.toMultipartWebhookExecuteRequest();
 			body = Utils.bodyToString(request.getFiles().isEmpty() ? request.getJsonPayload() : request); // support multipart
 			var result = URLRequest.of(getUrl(id, token))
 				.query("wait", true)
@@ -100,6 +101,10 @@ public class WebHookDestination implements PingDestination {
 			ex.printStackTrace();
 			return 0L;
 		}
+	}
+
+	public long execute(MessageBuilder message) {
+		return execute(message.toMultipartWebhookExecuteRequest());
 	}
 
 	public Mono<MessageData> edit(long messageId, MessageBuilder message) {

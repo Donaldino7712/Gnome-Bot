@@ -12,7 +12,6 @@ import dev.gnomebot.app.util.URLRequest;
 import dev.latvian.apps.ansi.log.Log;
 import dev.latvian.apps.tinyhttp.content.MimeType;
 import dev.latvian.apps.tinyhttp.http.response.HTTPResponse;
-import dev.latvian.apps.tinyhttp.http.response.error.client.ForbiddenError;
 import dev.latvian.apps.tinyhttp.http.response.error.client.NotFoundError;
 import dev.latvian.apps.webutils.CodingUtils;
 import dev.latvian.apps.webutils.data.Pair;
@@ -26,12 +25,14 @@ import discord4j.discordjson.json.MessageData;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.jar.JarInputStream;
 import java.util.regex.Matcher;
@@ -110,16 +111,20 @@ public class PasteHandlers {
 		return root.asResponse().publicCache(Duration.ofMinutes(5L));
 	}
 
-	public static HTTPResponse oldPaste(AppRequest req) throws Exception {
-		if (req.userAgent().contains("PetalBot")) {
-			throw new ForbiddenError("Access Denied");
-		}
+	public static HTTPResponse pasteBrowse(AppRequest req) throws Exception {
+		return pasteBrowse0(req, false);
+	}
 
+	public static HTTPResponse pasteBrowseRaw(AppRequest req) throws Exception {
+		return pasteBrowse0(req, true);
+	}
+
+	private static HTTPResponse pasteBrowse0(AppRequest req, boolean raw) throws Exception {
 		var channelId = req.getSnowflake("channel");
 		var messageId = req.getSnowflake("message");
 		var id0 = req.variable("id").asString().split("!", 2);
 		var id = SnowFlake.num(id0[0]);
-		var subfile = id0.length == 2 ? CodingUtils.decodeURL(id0[1]) : "";
+		var subfile = id0.length == 2 ? id0[1] : "";
 
 		MessageData message;
 
@@ -160,7 +165,6 @@ public class PasteHandlers {
 
 		var archive = filename.endsWith(".zip") || filename.endsWith(".jar");
 
-		zipExit:
 		if (archive && !subfile.isEmpty()) {
 			var stream = (filename.endsWith(".jar") ? new JarInputStream(new ByteArrayInputStream(contents)) : new ZipInputStream(new ByteArrayInputStream(contents)));
 			ZipEntry zipEntry;
@@ -173,17 +177,18 @@ public class PasteHandlers {
 						filename = filename.substring(filename.lastIndexOf('/') + 1);
 					}
 
-					contents = stream.readAllBytes();
-					break zipExit;
+					var url = "/paste/browse/" + channelId + "/" + messageId + "/" + id;
+					var rawUrl = getUrl(req.app, 2, channelId, messageId, attachment.id().asLong()) + "!" + subfile;
+					return paste0(req, raw, filename, stream, user, url, rawUrl, archive, subfile).publicCache(Duration.ofMinutes(5L));
 				}
 			}
 
 			throw new NotFoundError("File not found!");
 		}
 
-		var url = "/paste/" + channelId + "/" + messageId + "/" + id;
-		var rawUrl = attachment.url();
-		return paste0(req, filename, contents, user, url, rawUrl, archive, subfile).publicCache(Duration.ofMinutes(5L));
+		var url = "/paste/browse/" + channelId + "/" + messageId + "/" + id;
+		var rawUrl = subfile.isEmpty() ? attachment.url() : (getUrl(req.app, 2, channelId, messageId, attachment.id().asLong()) + "!" + subfile);
+		return paste0(req, raw, filename, new ByteArrayInputStream(contents), user, url, rawUrl, archive, subfile).publicCache(Duration.ofMinutes(5L));
 	}
 
 	public static HTTPResponse pasteMclogs(AppRequest req) {
@@ -210,9 +215,9 @@ public class PasteHandlers {
 		return root.asResponse().publicCache(Duration.ofMinutes(5L));
 	}
 
-	private static HTTPResponse paste0(AppRequest req, String filename, byte[] contents, String user, String url, String rawUrl, boolean archive, String subfile) throws Exception {
+	private static HTTPResponse paste0(AppRequest req, boolean raw, String filename, InputStream contents, String user, String url, String rawUrl, boolean archive, String subfile) throws Exception {
 		if (filename.endsWith(".pdf")) {
-			return HTTPResponse.ok().content(contents, MimeType.PDF);
+			return HTTPResponse.ok().content(contents.readAllBytes(), MimeType.PDF);
 		}
 
 		var root = req.createRoot(filename);
@@ -226,14 +231,14 @@ public class PasteHandlers {
 		if (archive && subfile.isEmpty()) {
 			var zipList = new ArrayList<Pair<String, String>>();
 
-			var stream = (filename.endsWith(".jar") ? new JarInputStream(new ByteArrayInputStream(contents)) : new ZipInputStream(new ByteArrayInputStream(contents)));
+			var stream = (filename.endsWith(".jar") ? new JarInputStream(contents) : new ZipInputStream(contents));
 			ZipEntry zipEntry;
 
 			while ((zipEntry = stream.getNextEntry()) != null) {
 				if (zipEntry.isDirectory() || zipEntry.getName().endsWith(".zip") || zipEntry.getName().endsWith(".jar")) {
 					zipList.add(Pair.of(zipEntry.getName(), ""));
 				} else {
-					zipList.add(Pair.of(zipEntry.getName(), url + "!" + CodingUtils.encodeURL(zipEntry.getName())));
+					zipList.add(Pair.of(zipEntry.getName(), url + "!" + zipEntry.getName()));
 				}
 			}
 
@@ -251,16 +256,48 @@ public class PasteHandlers {
 		}
 
 		if (filename.endsWith(".png") || filename.endsWith(".jpg") || filename.endsWith(".jpeg") || filename.endsWith(".gif") || filename.endsWith(".webp")) {
-			// return pasteText.img("data:image/" + filename.substring(filename.lastIndexOf('.') + 1) + ";base64," + Base64.getEncoder().encodeToString(contents));
-			return HTTPResponse.ok().content(contents, "image/" + filename.substring(filename.lastIndexOf('.') + 1));
+			var type = "image/" + filename.substring(filename.lastIndexOf('.') + 1);
+
+			if (raw) {
+				return HTTPResponse.ok().content(contents.readAllBytes(), type);
+			} else {
+				pasteText.img(rawUrl).style("width:fit-content;");
+			}
 		} else if (filename.endsWith(".mp4") || filename.endsWith(".avi") || filename.endsWith(".webm")) {
-			// return pasteText.img("data:image/" + filename.substring(filename.lastIndexOf('.') + 1) + ";base64," + Base64.getEncoder().encodeToString(contents));
-			return HTTPResponse.ok().content(contents, "video/" + filename.substring(filename.lastIndexOf('.') + 1));
-		} else if (filename.endsWith(".html")) {
-			pasteText.span().raw(new String(contents, StandardCharsets.UTF_8));
+			var type = "video/" + filename.substring(filename.lastIndexOf('.') + 1);
+
+			if (raw) {
+				return HTTPResponse.ok().content(contents.readAllBytes(), type);
+			} else {
+				pasteText.paired("video")
+					.attr("controls")
+					.attr("autoplay")
+					.name("media")
+					.attr("crossorigin", "anonymous")
+					.style("width:fit-content;")
+					.paired("source")
+					.attr("src", rawUrl)
+					.attr("type", type);
+			}
+		} else if (filename.endsWith(".mp3") || filename.endsWith(".wav") || filename.endsWith(".ogg")) {
+			var type = "audio/" + filename.substring(filename.lastIndexOf('.') + 1);
+
+			if (raw) {
+				return HTTPResponse.ok().content(contents.readAllBytes(), type);
+			} else {
+				pasteText.paired("audio")
+					.attr("controls")
+					.attr("autoplay")
+					.name("media")
+					.attr("crossorigin", "anonymous")
+					.style("width:fit-content;")
+					.paired("source")
+					.attr("src", rawUrl)
+					.attr("type", type);
+			}
 		} else {
 			List<String> lines = new ArrayList<>();
-			var reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(contents), StandardCharsets.UTF_8));
+			var reader = new BufferedReader(new InputStreamReader(contents, StandardCharsets.UTF_8));
 			String readerLine;
 
 			while ((readerLine = reader.readLine()) != null) {
@@ -425,15 +462,22 @@ public class PasteHandlers {
 		return root.asResponse();
 	}
 
-	public static String getUrl(App app, long channelId, long messageId, long attachmentId) {
-		return app.url("paste/" + channelId + "/" + messageId + "/" + attachmentId);
+	public static String getUrl(App app, int browse, long channelId, long messageId, long attachmentId) {
+		return app.url((browse == 2 ? "paste/browse-raw/" : browse == 1 ? "paste/browse/" : "paste/") + channelId + "/" + messageId + "/" + attachmentId);
+	}
+
+	public static Button createButton(App app, long channelId, long messageId, Attachment attachment) {
+		var fileName = attachment.getFilename().toLowerCase(Locale.ROOT);
+		var browse = fileName.endsWith(".zip") || fileName.endsWith(".jar");
+		var url = getUrl(app, browse ? 1 : 0, channelId, messageId, attachment.getId().asLong());
+		return Button.link(url, (browse ? "Browse " : "View ") + attachment.getFilename());
 	}
 
 	public static void pasteMessage(Databases db, MessageChannel outputMessageChannel, Message m, String content, List<Attachment> attachments) {
 		var buttons = new ArrayList<Button>();
 
 		for (var attachment : attachments) {
-			buttons.add(Button.link(getUrl(db.app, m.getChannelId().asLong(), m.getId().asLong(), attachment.getId().asLong()), "View " + attachment.getFilename()));
+			buttons.add(createButton(db.app, m.getChannelId().asLong(), m.getId().asLong(), attachment));
 		}
 
 		var mcLogsMatcher = MCLOGS_PATTERN.matcher(content);

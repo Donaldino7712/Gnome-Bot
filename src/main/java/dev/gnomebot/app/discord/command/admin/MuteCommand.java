@@ -18,8 +18,8 @@ import dev.latvian.apps.webutils.FormattingUtils;
 import discord4j.core.object.component.ActionComponent;
 import discord4j.core.object.component.ActionRow;
 import discord4j.core.object.component.Button;
-import discord4j.core.object.component.LayoutComponent;
 import discord4j.core.object.component.SelectMenu;
+import discord4j.core.object.component.TopLevelMessageComponent;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
 import discord4j.rest.util.AllowedMentions;
@@ -132,7 +132,7 @@ public class MuteCommand extends ApplicationCommands {
 			context.gc.mutedRole.role().ifPresent(r -> r.add(m.getId().asLong(), "Muted"));
 		}
 
-		List<LayoutComponent> adminButtons = new ArrayList<>();
+		var adminButtons = new ArrayList<TopLevelMessageComponent>();
 
 		if (auto.isEmpty()) {
 			if (contextMessage != null) {

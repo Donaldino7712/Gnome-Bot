@@ -12,7 +12,6 @@ import dev.gnomebot.app.data.channel.ChannelInfo;
 import dev.gnomebot.app.data.complex.ComplexMessageRenderContext;
 import dev.gnomebot.app.discord.command.admin.MuteCommand;
 import dev.gnomebot.app.discord.legacycommand.CommandContext;
-import dev.gnomebot.app.discord.legacycommand.CommandReader;
 import dev.gnomebot.app.discord.legacycommand.GnomeException;
 import dev.gnomebot.app.discord.legacycommand.LegacyCommands;
 import dev.gnomebot.app.server.AuthLevel;
@@ -744,7 +743,7 @@ public class MessageHandler {
 		var prefix = context.gc.legacyPrefix.get();
 
 		if (content.startsWith(prefix) && content.length() > prefix.length()) {
-			var reader = new CommandReader(context.gc, content.substring(prefix.length()));
+			var reader = context.reader(content.substring(prefix.length()));
 
 			try {
 				LegacyCommands.run(context, reader, content, false);
@@ -795,7 +794,7 @@ public class MessageHandler {
 
 	private static boolean handleMacro(CommandContext context, String content, String prefix) {
 		if (content.length() > prefix.length() && content.startsWith(prefix)) {
-			var reader = new CommandReader(context.gc, content.substring(prefix.length()));
+			var reader = context.reader(content.substring(prefix.length()));
 
 			try {
 				var macroName = reader.readString().orElse("").trim();

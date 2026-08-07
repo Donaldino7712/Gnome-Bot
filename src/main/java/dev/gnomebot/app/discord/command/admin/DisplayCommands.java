@@ -15,7 +15,6 @@ import dev.latvian.apps.ansi.log.Log;
 import dev.latvian.apps.webutils.FormattingUtils;
 import dev.latvian.apps.webutils.data.Pair;
 import discord4j.core.object.component.ActionRow;
-import discord4j.core.object.component.Button;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
 
@@ -204,7 +203,7 @@ public class DisplayCommands extends ApplicationCommands {
 
 		c.createMessage(MessageBuilder.create().addFile(event.context.gc.guildId + "-" + memberId.asString() + "-" + Instant.now() + ".csv", out.toByteArray()).toMessageCreateSpec()).flatMap(dm -> {
 			var attachment = dm.getAttachments().getFirst();
-			return dm.edit(MessageBuilder.create().addComponent(ActionRow.of(Button.link(PasteHandlers.getUrl(event.app, dm.getChannelId().asLong(), dm.getId().asLong(), attachment.getId().asLong()), "View " + attachment.getFilename()))).toMessageEditSpec());
+			return dm.edit(MessageBuilder.create().addComponent(ActionRow.of(PasteHandlers.createButton(event.app, dm.getChannelId().asLong(), dm.getId().asLong(), attachment))).toMessageEditSpec());
 		}).block();
 
 		event.respond("Done! Check your DMs!");

@@ -162,4 +162,8 @@ public class CommandContext {
 			message.addReaction(Emojis.VOTEUP).subscribe();
 		}
 	}
+
+	public CommandReader reader(String value) {
+		return new CommandReader(gc, value);
+	}
 }

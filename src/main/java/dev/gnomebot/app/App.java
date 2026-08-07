@@ -150,8 +150,9 @@ public class App {
 		webServer.get("/public/{file}", RootHandlers::publicfile);
 
 		webServer.get("/paste/mclogs/{id}", PasteHandlers::pasteMclogs);
+		webServer.get("/paste/browse/{channel}/{message}/<id>", PasteHandlers::pasteBrowse);
+		webServer.get("/paste/browse-raw/{channel}/{message}/<id>", PasteHandlers::pasteBrowseRaw);
 		webServer.get("/paste/{channel}/{message}/{id}", PasteHandlers::paste);
-		webServer.get("/old-paste/{channel}/{message}/{id}", PasteHandlers::oldPaste);
 
 		webServer.get("/api/info/ping", InfoHandlers::ping);
 		webServer.get("/api/info/user/{user}", InfoHandlers::user);
